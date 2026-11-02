@@ -136,7 +136,7 @@
   /* ---------- Paneles de servicio ---------- */
   function particles(seed) {
     var h = "";
-    for (var k = 0; k < 9; k++) {
+    for (var k = 0; k < 5; k++) {
       var r = function (n) { return (Math.sin(seed * 97 + k * 13.37 + n * 7.1) + 1) / 2; };
       h += '<i class="p" style="left:' + (r(1) * 100).toFixed(1) + "%;top:" + (r(2) * 100).toFixed(1) +
         "%;--s:" + (3 + r(3) * 6).toFixed(1) + "px;--t:" + (4 + r(4) * 5).toFixed(1) + "s;--dl:-" + (r(5) * 6).toFixed(1) +
@@ -181,7 +181,8 @@
         "</aside>" +
       "</div>" +
       '<span class="counter" aria-hidden="true">0' + (i + 1) + " / 0" + ZONES.length + "</span>" +
-      (i === 0 ? '<div class="scroll-hint" aria-hidden="true"><span>Scroll</span><i></i></div>' : "");
+      (i === 0 ? '<div class="scroll-hint" aria-hidden="true"><span>Scroll</span><i></i></div>' : "") +
+      '<div class="shade" aria-hidden="true"></div>';
     host.appendChild(sec);
   });
 
@@ -379,53 +380,113 @@
   });
   pill.addEventListener("pointerleave", function () { place(activeLink); });
 
-  /* Estado de animación */
-  var panels = qsa(".service"), servicios = $("servicios"), nav = $("nav");
+  /* =====================================================================
+     MOTOR DE ANIMACIÓN (optimizado)
+     - Cero lecturas de layout por cuadro: las posiciones se miden una vez
+       (measure) y después todo se calcula con matemática a partir del scroll.
+     - Solo se escriben `transform` y `opacity` directamente en pocos elementos
+       (nada de variables CSS compartidas ni filtros/desenfoques por cuadro).
+     - El bucle se apaga solo cuando no hay scroll ni resortes en movimiento.
+     ===================================================================== */
+  var panels = qsa(".service"), servicios = $("servicios"), nav = $("nav"), progress = qs(".progress"), glowEl = qs(".cursor-glow");
+  var accentEls = [nav, progress, glowEl];
   var stackMQ = window.matchMedia("(min-width: 981px) and (min-height: 640px)");
-  function syncStack() { servicios.classList.toggle("stack", stackMQ.matches); }
-  syncStack();
-  if (stackMQ.addEventListener) stackMQ.addEventListener("change", syncStack);
 
-  var pState = panels.map(function () { return { v: 0, cover: 0 }; });
-  var tilts = qsa(".hero-stage").map(function (st) {
-    return { stage: st, el: qs(".tilt", st), rx: new Spring(0, 140, 15), ry: new Spring(0, 140, 15) };
+  var P = panels.map(function (sec) {
+    return {
+      sec: sec, word: qs(".hero-word", sec), copy: qs(".hero-copy", sec), side: qs(".hero-side", sec),
+      stage: qs(".hero-stage", sec), shade: qs(".shade", sec),
+      v: 0, cover: 0, vis: false, top0: 0, h: 0, sig: ""
+    };
   });
-  var magnets = qsa("[data-magnet]").map(function (el) { return { el: el, x: new Spring(0, 220, 16), y: new Spring(0, 220, 16), moving: false }; });
-  var glowEl = qs(".cursor-glow"), gx = new Spring(innerWidth / 2, 90, 18), gy = new Spring(innerHeight / 2, 90, 18);
-  var ptr = { x: -9999, y: -9999, moved: false };
-  var mq = $("mq"), mqX = 0, mqW = 0, mqDir = 1, scrollVel = 0;
-  var sections = ["servicios", "eventos", "turnos", "visitanos"].map(function (id) { return { id: id, el: $(id) }; });
-  var currentSec = null, currentPanel = -2;
-  var lastY = window.scrollY, lastNavY = lastY, lastT = performance.now();
+  var tilts = P.map(function (p) {
+    return { stage: p.stage, el: qs(".tilt", p.sec), rx: new Spring(0, 140, 15), ry: new Spring(0, 140, 15) };
+  });
+  var magnets = qsa("[data-magnet]").map(function (el) {
+    return { el: el, x: new Spring(0, 220, 16), y: new Spring(0, 220, 16), moving: false };
+  });
+  var gx = new Spring(innerWidth / 2, 90, 18), gy = new Spring(innerHeight / 2, 90, 18), glowOn = false;
+  var secs = ["servicios", "eventos", "turnos", "visitanos"].map(function (id) { return { id: id, el: $(id), t: 0, b: 0 }; });
 
+  var G = { vh: 0, vw: 0, contTop: 0, contH: 0, docMax: 0, stack: false };
+  var currentSec = null, currentPanel = -2;
+  var navSolid = false, navHide = false, scrolledFlag = false;
+  var lastY = window.scrollY, lastNavY = lastY, lastT = performance.now();
+  var running = false, scrollVel = 0, mqRate = 1;
+
+  /* Cinta: animación nativa (compositor). El scroll solo cambia su velocidad. */
+  var mq = $("mq");
+  var mqAnim = mq.animate(
+    [{ transform: "translate3d(0,0,0)" }, { transform: "translate3d(-50%,0,0)" }],
+    { duration: 42000, iterations: Infinity, easing: "linear" }
+  );
+  if (reduce) mqAnim.pause();
+  else if ("IntersectionObserver" in window) {
+    new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting) mqAnim.play(); else mqAnim.pause(); });
+    }).observe(mq.parentNode);
+  }
+
+  /* Mide posiciones UNA vez (al cargar y al cambiar el tamaño) */
   function measure() {
-    mqW = mq.firstElementChild.offsetWidth;
+    G.vh = window.innerHeight; G.vw = window.innerWidth; G.stack = stackMQ.matches;
+    servicios.classList.toggle("stack", G.stack);
+    var y = window.scrollY;
+    G.contTop = servicios.getBoundingClientRect().top + y; G.contH = servicios.offsetHeight;
+    var acc = 0;
+    P.forEach(function (p) {
+      p.h = p.sec.offsetHeight; p.top0 = G.contTop + acc; acc += p.h; p.sig = "";
+      if (!G.stack) { p.sec.style.transform = ""; p.shade.style.opacity = 0; }
+    });
+    secs.forEach(function (s, i) {
+      if (i === 0) { s.t = G.contTop; s.b = G.contTop + G.contH; return; }
+      var r = s.el.getBoundingClientRect(); s.t = r.top + y; s.b = r.bottom + y;
+    });
+    G.docMax = Math.max(0, root.scrollHeight - G.vh);
     place(activeLink);
+    kick();
   }
 
   function setAccent(i) {
     if (i === currentPanel) return;
     currentPanel = i;
-    if (i < 0) { root.style.setProperty("--accent", DEFAULT_ACCENT.c2); root.style.setProperty("--accent-2", DEFAULT_ACCENT.c1); }
-    else { root.style.setProperty("--accent", ZONES[i].c2); root.style.setProperty("--accent-2", ZONES[i].c1); }
+    var c1 = i < 0 ? DEFAULT_ACCENT.c1 : ZONES[i].c1, c2 = i < 0 ? DEFAULT_ACCENT.c2 : ZONES[i].c2;
+    accentEls.forEach(function (el) { el.style.setProperty("--accent", c2); el.style.setProperty("--accent-2", c1); });
+  }
+
+  function apply(p) {
+    var v = p.v, c = p.cover, sig = v.toFixed(3) + "|" + c.toFixed(3);
+    if (sig === p.sig) return;
+    p.sig = sig;
+    p.word.style.transform = "translate(calc(-50% + " + (v * G.vw * 0.16).toFixed(1) + "px), -50%) rotate(-6deg)";
+    var op = Math.max(0, 1 - c * 1.1).toFixed(3);
+    p.copy.style.transform = "translate3d(0," + (v * 60).toFixed(1) + "px,0)"; p.copy.style.opacity = op;
+    p.side.style.transform = "translate3d(0," + (v * 40).toFixed(1) + "px,0)"; p.side.style.opacity = op;
+    p.stage.style.transform = "translate3d(0," + (v * 110).toFixed(1) + "px,0) scale(" + (1 - c * 0.08).toFixed(4) + ")";
+    if (G.stack) { p.sec.style.transform = "scale(" + (1 - c * 0.06).toFixed(4) + ")"; p.shade.style.opacity = (c * 0.55).toFixed(3); }
   }
 
   function frame(now) {
     var dt = Math.min((now - lastT) / 1000, 1 / 30) || 1 / 60; lastT = now;
-    var y = window.scrollY, vh = window.innerHeight, dy = y - lastY; lastY = y;
-    var stack = servicios.classList.contains("stack");
+    var y = window.scrollY, vh = G.vh, dy = y - lastY; lastY = y;
+    var busy = dy !== 0;
 
-    /* barra de progreso, menú y pista de scroll */
-    var max = root.scrollHeight - vh;
-    root.style.setProperty("--sp", (max > 0 ? y / max : 0).toFixed(4));
-    nav.classList.toggle("solid", y > 40);
-    if (y > lastNavY + 4 && y > 160) nav.classList.add("hide"); else if (y < lastNavY - 4) nav.classList.remove("hide");
+    /* barra de progreso, menú y pista de scroll (solo si hubo scroll) */
+    if (dy !== 0) {
+      progress.style.transform = "scaleX(" + (G.docMax > 0 ? clamp(y / G.docMax, 0, 1) : 0).toFixed(4) + ")";
+      var solid = y > 40;
+      if (solid !== navSolid) { navSolid = solid; nav.classList.toggle("solid", solid); }
+      var hide = navHide;
+      if (y > lastNavY + 4 && y > 160) hide = true; else if (y < lastNavY - 4) hide = false;
+      if (hide !== navHide) { navHide = hide; nav.classList.toggle("hide", hide); }
+      var sc = y > 60;
+      if (sc !== scrolledFlag) { scrolledFlag = sc; document.body.classList.toggle("scrolled", sc); }
+    }
     lastNavY = y;
-    document.body.classList.toggle("scrolled", y > 60);
 
     /* sección activa en el menú */
     var cs = null;
-    sections.forEach(function (s) { var r = s.el.getBoundingClientRect(); if (r.top <= vh * 0.5 && r.bottom > vh * 0.5) cs = s.id; });
+    secs.forEach(function (s) { if (s.t - y <= vh * 0.5 && s.b - y > vh * 0.5) cs = s.id; });
     if (cs !== currentSec) {
       currentSec = cs;
       activeLink = links.filter(function (a) { return a.getAttribute("data-sec") === cs; })[0] || null;
@@ -433,72 +494,99 @@
       place(activeLink);
     }
 
-    /* paneles: parallax, apilado y color de acento activo */
-    var active = -1, k = 1 - Math.pow(0.0005, dt);
-    panels.forEach(function (p, i) {
-      var r = p.getBoundingClientRect();
-      var pr = clamp(r.top / vh, -1, 1), q = 0;
-      if (stack && panels[i + 1]) q = clamp(1 - panels[i + 1].getBoundingClientRect().top / vh, 0, 1);
-      var v = stack ? clamp(pr - q, -1, 1) : pr;
-      if (reduce) { v = 0; q = 0; }
-      var s = pState[i];
-      s.v += (v - s.v) * k; s.cover += (q - s.cover) * k;
-      if (Math.abs(s.v - v) < 0.0005) s.v = v;
-      if (Math.abs(s.cover - q) < 0.0005) s.cover = q;
-      p.style.setProperty("--v", s.v.toFixed(4)); p.style.setProperty("--cover", s.cover.toFixed(4));
-      if (r.top <= vh * 0.5 && r.bottom > vh * 0.5) active = i;
+    /* paneles: posición calculada con matemática (sin leer el DOM) */
+    var k = 1 - Math.pow(0.0005, dt), active = -1, bottom = G.contTop + G.contH - y;
+    P.forEach(function (p, i) {
+      var top = p.top0 - y;
+      if (G.stack) top = Math.min(Math.max(top, 0), bottom - p.h);
+      var q = 0, nx = P[i + 1];
+      if (G.stack && nx) { var nt = Math.min(Math.max(nx.top0 - y, 0), bottom - nx.h); q = clamp(1 - nt / vh, 0, 1); }
+      var vis = top < vh * 1.5 && top + p.h > -vh * 0.5 && q < 0.995;
+      if (vis !== p.vis) { p.vis = vis; p.sec.classList.toggle("vis", vis); }
+      if (top <= vh * 0.5 && top + p.h > vh * 0.5) active = i;
+      if (!vis) return;
+      var pr = clamp(top / vh, -1, 1), tv = G.stack ? clamp(pr - q, -1, 1) : pr;
+      if (reduce) { tv = 0; q = 0; }
+      p.v += (tv - p.v) * k; p.cover += (q - p.cover) * k;
+      if (Math.abs(p.v - tv) < 0.0008) p.v = tv; else busy = true;
+      if (Math.abs(p.cover - q) < 0.0008) p.cover = q; else busy = true;
+      apply(p);
     });
     setAccent(active);
 
     if (!reduce) {
-      /* puntero: inclinación 3D, imanes y luz */
-      if (ptr.moved && !coarse) {
-        tilts.forEach(function (t) {
-          var r = t.stage.getBoundingClientRect();
-          var inside = ptr.x > r.left - 60 && ptr.x < r.right + 60 && ptr.y > r.top - 60 && ptr.y < r.bottom + 60;
-          t.ry.t = inside ? clamp((ptr.x - (r.left + r.width / 2)) / (r.width / 2), -1, 1) * 13 : 0;
-          t.rx.t = inside ? clamp((ptr.y - (r.top + r.height / 2)) / (r.height / 2), -1, 1) * -10 : 0;
-        });
-        magnets.forEach(function (m) {
-          var r = m.el.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height / 2;
-          var near = Math.abs(ptr.x - cx) < r.width / 2 + 40 && Math.abs(ptr.y - cy) < r.height / 2 + 40;
-          m.x.t = near ? clamp((ptr.x - cx) * 0.3, -14, 14) : 0; m.y.t = near ? clamp((ptr.y - cy) * 0.35, -10, 10) : 0;
-        });
-        gx.t = ptr.x; gy.t = ptr.y; ptr.moved = false;
-      }
+      /* resortes: inclinación 3D, imanes y luz del cursor (solo si se están moviendo) */
       tilts.forEach(function (t) {
         if (t.rx.idle() && t.ry.idle()) return;
-        t.rx.step(dt); t.ry.step(dt);
-        t.el.style.setProperty("--rx", t.rx.v.toFixed(2) + "deg"); t.el.style.setProperty("--ry", t.ry.v.toFixed(2) + "deg");
+        t.rx.step(dt); t.ry.step(dt); busy = true;
+        t.el.style.transform = "perspective(900px) rotateX(" + t.rx.v.toFixed(2) + "deg) rotateY(" + t.ry.v.toFixed(2) + "deg)";
       });
       magnets.forEach(function (m) {
         if (m.x.idle() && m.y.idle()) { if (m.moving) { m.el.style.transform = ""; m.moving = false; } return; }
-        m.x.step(dt); m.y.step(dt); m.moving = true;
+        m.x.step(dt); m.y.step(dt); m.moving = true; busy = true;
         m.el.style.transform = "translate3d(" + m.x.v.toFixed(2) + "px," + m.y.v.toFixed(2) + "px,0)";
       });
-      if (glowEl && !coarse) { gx.step(dt); gy.step(dt); glowEl.style.transform = "translate3d(" + gx.v.toFixed(1) + "px," + gy.v.toFixed(1) + "px,0)"; }
-
-      /* cinta: velocidad base + empuje según la velocidad del scroll */
+      if (glowOn && !(gx.idle() && gy.idle())) {
+        gx.step(dt); gy.step(dt); busy = true;
+        glowEl.style.transform = "translate3d(" + gx.v.toFixed(1) + "px," + gy.v.toFixed(1) + "px,0)";
+      }
+      /* cinta: la velocidad sube con el scroll y vuelve sola a la normal */
       scrollVel += (dy / dt - scrollVel) * 0.12;
-      if (Math.abs(dy) > 0.5) mqDir += ((dy >= 0 ? 1 : -1) - mqDir) * 0.15;
-      mqX -= (55 + Math.abs(scrollVel) * 0.5) * mqDir * dt;
-      if (mqW) { if (mqX <= -mqW) mqX += mqW; if (mqX > 0) mqX -= mqW; }
-      mq.style.transform = "translate3d(" + mqX.toFixed(1) + "px,0,0)";
+      var target = 1 + Math.min(Math.abs(scrollVel) / 350, 5);
+      mqRate += (target - mqRate) * 0.12;
+      if (mqRate > 1.02 || target > 1.02) { mqAnim.playbackRate = mqRate; busy = true; }
+      else if (mqAnim.playbackRate !== 1) mqAnim.playbackRate = 1;
     }
+
+    if (busy) requestAnimationFrame(frame); else running = false;
+  }
+
+  /* El bucle solo corre cuando hace falta */
+  function kick() {
+    if (running) return;
+    running = true; lastT = performance.now();
     requestAnimationFrame(frame);
   }
+  window.addEventListener("scroll", kick, { passive: true });
 
-  /* Eventos de puntero */
-  if (!coarse) {
+  /* Punteros: cada elemento escucha lo suyo (sin leer el DOM en el bucle) */
+  if (!coarse && !reduce) {
+    tilts.forEach(function (t) {
+      t.stage.addEventListener("pointermove", function (e) {
+        var r = t.stage.getBoundingClientRect();
+        t.ry.t = clamp((e.clientX - (r.left + r.width / 2)) / (r.width / 2), -1, 1) * 13;
+        t.rx.t = clamp((e.clientY - (r.top + r.height / 2)) / (r.height / 2), -1, 1) * -10;
+        kick();
+      }, { passive: true });
+      t.stage.addEventListener("pointerleave", function () { t.rx.t = 0; t.ry.t = 0; kick(); });
+    });
+    magnets.forEach(function (m) {
+      m.el.addEventListener("pointermove", function (e) {
+        var r = m.el.getBoundingClientRect();
+        m.x.t = clamp((e.clientX - (r.left + r.width / 2 - m.x.v)) * 0.3, -14, 14);
+        m.y.t = clamp((e.clientY - (r.top + r.height / 2 - m.y.v)) * 0.35, -10, 10);
+        kick();
+      }, { passive: true });
+      m.el.addEventListener("pointerleave", function () { m.x.t = 0; m.y.t = 0; kick(); });
+    });
     window.addEventListener("pointermove", function (e) {
-      ptr.x = e.clientX; ptr.y = e.clientY; ptr.moved = true;
-      if (glowEl && !glowEl.classList.contains("on")) { gx.v = gx.t = e.clientX; gy.v = gy.t = e.clientY; glowEl.classList.add("on"); }
-      var sp = e.target.closest && e.target.closest(".spot");
-      if (sp) { var r = sp.getBoundingClientRect(); sp.style.setProperty("--mx", e.clientX - r.left + "px"); sp.style.setProperty("--my", e.clientY - r.top + "px"); }
+      if (!glowOn) { glowOn = true; gx.v = gx.t = e.clientX; gy.v = gy.t = e.clientY; glowEl.classList.add("on"); }
+      gx.t = e.clientX; gy.t = e.clientY; kick();
     }, { passive: true });
-    document.addEventListener("pointerleave", function () { ptr.x = ptr.y = -9999; ptr.moved = true; });
+    qsa(".spot").forEach(function (sp) {
+      sp.addEventListener("pointermove", function (e) {
+        var r = sp.getBoundingClientRect();
+        sp.style.setProperty("--mx", e.clientX - r.left + "px"); sp.style.setProperty("--my", e.clientY - r.top + "px");
+      }, { passive: true });
+    });
   }
-  window.addEventListener("resize", measure);
+
+  /* Re-medir cuando cambia el tamaño o el contenido */
+  var mTimer = null;
+  function remeasure() { clearTimeout(mTimer); mTimer = setTimeout(measure, 120); }
+  window.addEventListener("resize", remeasure);
+  if (stackMQ.addEventListener) stackMQ.addEventListener("change", remeasure);
+  if ("ResizeObserver" in window) new ResizeObserver(remeasure).observe(document.body);
 
   /* ---------- Arranque: pantalla de carga -> animación de entrada ---------- */
   var t0 = performance.now(), started = false;
@@ -508,12 +596,9 @@
     document.body.classList.add("ready");
     setTimeout(function () { var l = qs(".loader"); if (l) l.remove(); }, 1400);
     observe();
-    requestAnimationFrame(function (t) { lastT = t; requestAnimationFrame(frame); });
+    kick();
   }
-  function whenReady() {
-    var wait = Math.max(0, 1000 - (performance.now() - t0));
-    setTimeout(start, wait);
-  }
+  function whenReady() { setTimeout(start, Math.max(0, 1000 - (performance.now() - t0))); }
   var loaded = document.readyState === "complete" ? Promise.resolve() : new Promise(function (r) { window.addEventListener("load", r, { once: true }); });
   var fonts = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve();
   Promise.all([loaded, fonts]).then(whenReady);
