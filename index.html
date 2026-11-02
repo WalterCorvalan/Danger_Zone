@@ -10,85 +10,160 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>document.documentElement.classList.add("js");</script>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-<header class="nav">
-  <a class="brand" href="#ps5" aria-label="Danger Zone - inicio">
+<!-- Pantalla de carga -->
+<div class="loader" aria-hidden="true">
+  <img src="assets/logo.png" alt="" width="96" height="96">
+  <div class="bar"><i></i></div>
+</div>
+
+<div class="progress" aria-hidden="true"></div>
+<div class="cursor-glow" aria-hidden="true"></div>
+
+<header class="nav" id="nav">
+  <a class="brand" href="#servicios" aria-label="Danger Zone - inicio">
     <img src="assets/logo.png" alt="" width="40" height="40">
     <span>DANGER ZONE</span>
   </a>
   <nav class="pill-nav" aria-label="Principal">
-    <a href="#ps5">Servicios</a>
-    <a href="#torneos">Torneos</a>
-    <a href="#visitanos">Visitanos</a>
+    <span class="pill-ind" aria-hidden="true"></span>
+    <a href="#servicios" data-sec="servicios">Servicios</a>
+    <a href="#eventos" data-sec="eventos">Eventos</a>
+    <a href="#turnos" data-sec="turnos">Turnos</a>
+    <a href="#visitanos" data-sec="visitanos">Visitanos</a>
   </nav>
-  <a class="btn btn-sm" data-wa href="#">Reservar</a>
+  <a class="btn btn-sm" data-magnet href="#turnos">Reservar</a>
 </header>
 
-<!-- SERVICIOS: un panel por zona, se generan en script.js -->
-<div id="servicios"></div>
+<main>
+  <!-- SERVICIOS: un panel por zona, se generan en script.js -->
+  <div id="servicios"></div>
 
-<!-- TORNEOS -->
-<section id="torneos" class="section section-alt">
-  <div class="wrap split">
-    <div>
-      <p class="eyebrow">Competí</p>
-      <h2>Torneos y <em>eventos</em></h2>
-      <p class="lead">Armamos torneos, noches temáticas y eventos especiales para que vengas con tus amigos y te lleves la gloria. Seguí las novedades en nuestras historias de Instagram.</p>
-      <div class="hero-actions">
-        <a class="btn" href="https://www.instagram.com/dangerzone.ok" target="_blank" rel="noopener">Ver novedades</a>
-        <a class="btn btn-ghost" data-wa href="#">Consultar por eventos</a>
+  <!-- Cinta animada: acelera con el scroll -->
+  <div class="marquee" aria-hidden="true"><div class="marquee-track" id="mq"></div></div>
+
+  <!-- EVENTOS: las tarjetas se generan en script.js (array EVENTS) -->
+  <section id="eventos" class="section">
+    <div class="wrap">
+      <p class="eyebrow" data-reveal>Próximos eventos</p>
+      <h2 data-split="words">Torneos en <em>el local</em></h2>
+      <div class="event-cards" id="event-cards" data-group></div>
+    </div>
+  </section>
+
+  <!-- TURNOS -->
+  <section id="turnos" class="section section-alt">
+    <div class="wrap split booking">
+      <div>
+        <p class="eyebrow" data-reveal>Reservas</p>
+        <h2 data-split="words">Sacá tu <em>turno</em></h2>
+        <p class="lead" data-reveal style="--d:.2s">Elegí el día y el horario y te confirmamos por WhatsApp. ¿Cumpleaños? También podés alquilar el local completo para tu festejo.</p>
+        <ul class="feature-list" data-group>
+          <li class="spot"><span>🎮</span><div><strong>Turno por zona</strong><small>PS5, Xbox, PC, realidad virtual o simulador F1.</small></div></li>
+          <li class="spot"><span>🎂</span><div><strong>Cumpleaños</strong><small>Alquilá el local entero para tu festejo.</small></div></li>
+          <li class="spot"><span>💬</span><div><strong>Confirmación por WhatsApp</strong><small>Te respondemos para cerrar día y horario.</small></div></li>
+        </ul>
+      </div>
+
+      <form id="booking" class="form spot" data-reveal style="--d:.15s" novalidate>
+        <div class="seg" role="radiogroup" aria-label="Tipo de reserva">
+          <label><input type="radio" name="kind" value="turno" checked><span>Turno</span></label>
+          <label><input type="radio" name="kind" value="cumple"><span>Cumpleaños · local completo</span></label>
+        </div>
+
+        <div class="field">
+          <label for="f-name">Tu nombre</label>
+          <input id="f-name" name="name" autocomplete="name" placeholder="Nombre y apellido" required>
+        </div>
+
+        <div class="field" id="f-zone-wrap">
+          <label for="f-zone">Zona</label>
+          <select id="f-zone" name="zone">
+            <option>PS5</option>
+            <option>Xbox</option>
+            <option>PC Gamer</option>
+            <option>Realidad Virtual</option>
+            <option>Simulador F1</option>
+            <option>Varias zonas</option>
+          </select>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="f-date">Fecha</label>
+            <input type="date" id="f-date" name="date" required>
+          </div>
+          <div class="field">
+            <label for="f-time">Horario</label>
+            <select id="f-time" name="time" required><option value="">Elegí una fecha</option></select>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="f-people" id="l-people">Personas</label>
+            <input type="number" id="f-people" name="people" min="1" value="2">
+          </div>
+          <div class="field" id="f-age-wrap" hidden>
+            <label for="f-age">Edad del cumpleañero</label>
+            <input type="number" id="f-age" name="age" min="1" placeholder="Opcional">
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="f-notes">Comentarios (opcional)</label>
+          <textarea id="f-notes" name="notes" rows="2" placeholder="Juegos que querés, decoración, dudas..."></textarea>
+        </div>
+
+        <p class="form-msg" id="f-msg" role="status" aria-live="polite"></p>
+        <button class="btn" type="submit" data-magnet>Enviar por WhatsApp</button>
+        <p class="muted small">Se abre WhatsApp con tu pedido ya escrito. Lo confirmamos con vos.</p>
+      </form>
+    </div>
+  </section>
+
+  <!-- VISITANOS -->
+  <section id="visitanos" class="section">
+    <div class="wrap">
+      <p class="eyebrow" data-reveal>Visitanos</p>
+      <h2 data-split="words">Te esperamos en <em>Del Viso</em></h2>
+      <div class="info-grid" data-group>
+        <div class="info-card spot">
+          <h3>Horarios</h3>
+          <table>
+            <tr><td>Lunes a viernes</td><td>11:00 – 22:00</td></tr>
+            <tr><td>Sábado</td><td>12:00 – 00:00</td></tr>
+          </table>
+          <p class="muted">¿Querés venir en otro horario? Consultanos por reservas especiales y disponibilidad.</p>
+        </div>
+        <div class="info-card spot">
+          <h3>Dirección</h3>
+          <p class="addr">Av. Constitución 546<br>Del Viso, Buenos Aires</p>
+          <a class="btn btn-ghost" data-magnet target="_blank" rel="noopener"
+             href="https://www.google.com/maps/search/?api=1&query=Av.+Constituci%C3%B3n+546,+Del+Viso">Abrir en Google Maps</a>
+        </div>
+        <div class="info-card spot">
+          <h3>Reservá</h3>
+          <p>Escribinos por WhatsApp y te guardamos tu lugar.</p>
+          <a class="btn" data-magnet data-wa href="#">WhatsApp +54 11 5815-3106</a>
+          <p class="muted"><a href="https://www.instagram.com/dangerzone.ok" target="_blank" rel="noopener">@dangerzone.ok</a> en Instagram</p>
+        </div>
       </div>
     </div>
-    <ul class="feature-list">
-      <li><span>🏆</span><div><strong>Torneos</strong><small>Competí por premios y reconocimiento.</small></div></li>
-      <li><span>🏁</span><div><strong>Simu F1</strong><small>Desafíos de vueltas rápidas en el simulador.</small></div></li>
-      <li><span>🎃</span><div><strong>Eventos temáticos</strong><small>Fiestas y noches especiales durante el año.</small></div></li>
-      <li><span>🎂</span><div><strong>Cumpleaños y grupos</strong><small>Consultá por horarios especiales y reservas.</small></div></li>
-    </ul>
-  </div>
-</section>
-
-<!-- VISITANOS -->
-<section id="visitanos" class="section">
-  <div class="wrap">
-    <p class="eyebrow">Visitanos</p>
-    <h2>Te esperamos en <em>Del Viso</em></h2>
-    <div class="info-grid">
-      <div class="info-card">
-        <h3>Horarios</h3>
-        <table>
-          <tr><td>Lunes a viernes</td><td>11:00 – 22:00</td></tr>
-          <tr><td>Sábado</td><td>12:00 – 00:00</td></tr>
-        </table>
-        <p class="muted">¿Querés venir en otro horario? Consultanos por reservas especiales y disponibilidad.</p>
-      </div>
-      <div class="info-card">
-        <h3>Dirección</h3>
-        <p class="addr">Av. Constitución 546<br>Del Viso, Buenos Aires</p>
-        <a class="btn btn-ghost" target="_blank" rel="noopener"
-           href="https://www.google.com/maps/search/?api=1&query=Av.+Constituci%C3%B3n+546,+Del+Viso">Abrir en Google Maps</a>
-      </div>
-      <div class="info-card">
-        <h3>Reservá</h3>
-        <p>Escribinos por WhatsApp y te guardamos tu lugar.</p>
-        <a class="btn" data-wa href="#">WhatsApp +54 11 5815-3106</a>
-        <p class="muted"><a href="https://www.instagram.com/dangerzone.ok" target="_blank" rel="noopener">@dangerzone.ok</a> en Instagram</p>
-      </div>
-    </div>
-  </div>
-</section>
+  </section>
 </main>
 
-<footer class="footer">
+<footer class="footer" data-reveal>
   <img src="assets/logo.png" alt="Danger Zone - Modo Bestia Activado" width="56" height="56">
   <p>© <span id="year"></span> Danger Zone · Av. Constitución 546, Del Viso</p>
 </footer>
 
-<a class="wa-float" data-wa href="#" aria-label="Reservar por WhatsApp">
-  <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.2-1.200l-.3-.2-3 .8.8-2.900-.2-.3A8.200 8.200 0 1 1 12 20.200zm4.500-6.100c-.2-.1-1.500-.7-1.700-.8-.2-.1-.4-.1-.6.100l-.8 1c-.1.200-.3.200-.5.100a6.700 6.700 0 0 1-3.300-2.900c-.2-.4.200-.4.700-1.300.1-.2 0-.3 0-.5l-.8-1.800c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.100-.7.300-.3.300-1 1-1 2.400s1 2.800 1.200 3c.1.200 2 3.100 4.900 4.300 1.800.8 2.500.8 3.400.7.500-.1 1.600-.7 1.800-1.300.2-.6.200-1.200.2-1.300-.1-.2-.3-.2-.6-.4z"/></svg>
+<a class="wa-float" data-wa data-magnet href="#" aria-label="Reservar por WhatsApp">
+  <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.500-6.100c-.2-.1-1.500-.7-1.700-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.200-.3.200-.5.100a6.700 6.700 0 0 1-3.300-2.900c-.2-.4.200-.4.700-1.300.1-.2 0-.3 0-.5l-.8-1.800c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.100-.7.300-.3.300-1 1-1 2.400s1 2.800 1.200 3c.1.200 2 3.100 4.900 4.300 1.800.8 2.500.8 3.400.7.500-.1 1.600-.7 1.800-1.300.2-.6.200-1.200.2-1.300-.1-.2-.3-.2-.6-.4z"/></svg>
 </a>
 
 <script src="script.js"></script>
