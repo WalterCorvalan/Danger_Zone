@@ -11,21 +11,21 @@ window.DZ = {
      img:  imagen del banner (opcional). Si el archivo existe en assets/, se usa
            en lugar de la ilustración. Ver README. */
   events: [
-    { id: "mk", name: "Mortal Kombat", tag: "Torneo", date: null, time: "",
+    { id: "mk", name: "Mortal Kombat 11", tag: "Torneo", date: null, time: "",
       desc: "Elegí a tu luchador y demostrá quién manda en la arena.",
       img: "assets/evento-mk.webp", e1: "#ff2f3f", e2: "#6e0b0b" },
-    { id: "fifa", name: "FIFA 26", tag: "Torneo", date: null, time: "",
-      desc: "Torneo de FIFA 26. Armá tu equipo y salí a buscar la copa.",
+    { id: "fifa", name: "F26", tag: "Torneo", date: null, time: "",
+      desc: "Torneo de F26. Armá tu equipo y salí a buscar la copa.",
       img: "assets/evento-fifa.webp", e1: "#17ff8f", e2: "#07503a" }
   ],
 
   /* ---------- SALÓN DE LA FAMA (ganadores históricos) ----------
      Un renglón por torneo. Se ordena solo: el más reciente arriba.
      Copiar el modelo de abajo (sin las barras //) y completar:
-       { fecha: "2026-10-10", torneo: "FIFA 26", ganador: "Nombre", segundo: "Nombre" },
+       { fecha: "2026-10-10", torneo: "F26", ganador: "Nombre", segundo: "Nombre" },
      "segundo" es opcional. */
   winners: [
-    // { fecha: "2026-10-10", torneo: "FIFA 26", ganador: "Nombre", segundo: "Nombre" },
+    // { fecha: "2026-10-10", torneo: "F26", ganador: "Nombre", segundo: "Nombre" },
   ],
 
   /* ---------- JUEGOS DISPONIBLES ----------
@@ -35,8 +35,8 @@ window.DZ = {
      Revisar esta lista: es un punto de partida, hay que completarla con
      los juegos que realmente tiene el local. */
   games: [
-    { name: "FIFA 26",        plat: ["PS5", "Xbox", "PC"], genre: "Fútbol",  estado: "disponible", color: "green" },
-    { name: "Mortal Kombat",  plat: ["PS5", "Xbox"],       genre: "Lucha",   estado: "disponible", color: "red" },
+    { name: "F26",        plat: ["PS5", "Xbox", "PC"], genre: "Fútbol",  estado: "disponible", color: "green" },
+    { name: "Mortal Kombat 11",  plat: ["PS5", "Xbox"],       genre: "Lucha",   estado: "disponible", color: "red" },
     { name: "F1",             plat: ["Simulador"],         genre: "Carreras", estado: "disponible", color: "orange" }
   ],
 

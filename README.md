@@ -14,7 +14,7 @@ Abrir `index.html` en el navegador, o servirla con `python3 -m http.server`.
 
 | Qué | Dónde en `data.js` |
 |---|---|
-| Fechas y horarios de los torneos (Mortal Kombat, FIFA 26) | `events` (`date: "2026-11-28"`, `time: "18:00 hs"`) |
+| Fechas y horarios de los torneos (Mortal Kombat 11, F26) | `events` (`date: "2026-11-28"`, `time: "18:00 hs"`) |
 | Ganadores históricos (tabla "Salón de la fama") | `winners` (un renglón por torneo; se ordena solo) |
 | Juegos disponibles (grilla con filtros por plataforma) | `games` |
 | Fotos del lugar y la gente | `gallery` (subir la foto a `assets/galeria/` y sumar una línea) |
