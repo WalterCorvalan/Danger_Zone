@@ -73,23 +73,23 @@
 
   /* ---------- Datos de cada zona ---------- */
   var ZONES = [
-    { id: "ps5", img: "assets/ps5.png", logo: "assets/logo-ps5.png", credit: { name: "DualSense", by: "Sonson2", lic: "CC0", url: "https://commons.wikimedia.org/wiki/File:DualSense_Wireless_Controller_Cobalt_Blue.jpg" }, name: "PS5", eyebrow: "PlayStation 5", title: "PS5", art: "ps5",
+    { id: "ps5", img: "assets/ps5.webp", credit: { name: "DualSense", by: "Sonson2", lic: "CC0", url: "https://commons.wikimedia.org/wiki/File:DualSense_Wireless_Controller_Cobalt_Blue.jpg" }, name: "PS5", eyebrow: "PlayStation 5", title: "PS5", art: "ps5",
       c1: "#4aa8ff", c2: "#1f5bff", bgA: "#0d3a80", bgB: "#050d24",
       desc: "Los mejores juegos de PlayStation 5, con pantalla grande y amigos al lado.",
       s1: ["Modo", "Multijugador"], s2: ["Reserva", "WhatsApp"] },
-    { id: "xbox", img: "assets/xbox.png", logo: "assets/logo-xbox.png", name: "Xbox", eyebrow: "Xbox", title: "Xbox", art: "xbox",
+    { id: "xbox", img: "assets/xbox.webp", credit: { name: "Xbox", by: "Evan-Amos", lic: "Dominio público", url: "https://commons.wikimedia.org/wiki/File:Microsoft-Xbox-One-controller.jpg" }, name: "Xbox", eyebrow: "Xbox", title: "Xbox", art: "xbox",
       c1: "#9dff3a", c2: "#18c964", bgA: "#0c4a26", bgB: "#04120a",
       desc: "Competí o jugá en equipo en Xbox. Tu consola favorita, sin gastar en ella.",
       s1: ["Modo", "Multijugador"], s2: ["Reserva", "WhatsApp"] },
-    { id: "pc", img: "assets/pc.png", logo: "assets/logo-pc.png", name: "PC Gamer", eyebrow: "Gaming PC", title: "PC Gamer", art: "pc",
+    { id: "pc", img: "assets/pc.webp", credit: { name: "PC", by: "PantheraLeo1359531", lic: "CC BY 4.0", url: "https://commons.wikimedia.org/wiki/File:Gaming-PC_20240426_HOF2508-HDR_RAW-Export.png" }, name: "PC Gamer", eyebrow: "Gaming PC", title: "PC Gamer", art: "pc",
       c1: "#ff7ae8", c2: "#ff2bd6", bgA: "#5a0f55", bgB: "#14041a",
       desc: "Equipos armados para jugar. Shooters, MOBAs y todo lo que quieras.",
       s1: ["Estilo", "Competitivo"], s2: ["Reserva", "WhatsApp"] },
-    { id: "vr", img: "assets/vr.png", logo: "assets/logo-vr.png", name: "Realidad Virtual", eyebrow: "Realidad virtual", title: "Realidad Virtual", art: "vr",
+    { id: "vr", img: "assets/vr.webp", credit: { name: "Realidad virtual", by: "Evan-Amos", lic: "Dominio público", url: "https://commons.wikimedia.org/wiki/File:Oculus-Rift-CV1-Headset-Front_with_transparent_background.png" }, name: "Realidad Virtual", eyebrow: "Realidad virtual", title: "Realidad Virtual", art: "vr",
       c1: "#c77dff", c2: "#7b2cff", bgA: "#3b1380", bgB: "#0a0418",
       desc: "Meté la cabeza en el juego. Una experiencia inmersiva que tenés que probar.",
       s1: ["Experiencia", "Inmersiva"], s2: ["Reserva", "WhatsApp"] },
-    { id: "sim", img: "assets/sim.png", logo: "assets/logo-sim.png", name: "Simulador F1", eyebrow: "Simu F1", title: "Simulador F1", art: "sim",
+    { id: "sim", img: "assets/sim.webp", credit: { name: "Volante", by: "Evan-Amos", lic: "Dominio público", url: "https://commons.wikimedia.org/wiki/File:Logitech-Driving-Force-PS3.jpg" }, name: "Simulador F1", eyebrow: "Simu F1", title: "Simulador F1", art: "sim",
       c1: "#ff8a3d", c2: "#ff2a3a", bgA: "#6b1010", bgB: "#150506",
       desc: "Volante, pedales y pista. Sentí la velocidad y buscá la vuelta perfecta.",
       s1: ["Experiencia", "Realista"], s2: ["Reserva", "WhatsApp"] }

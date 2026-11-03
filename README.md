@@ -21,10 +21,10 @@ Abrir `index.html` en el navegador, o servirla con `python3 -m http.server`.
 
 ## Imágenes reales (opcional)
 
-Mientras no existan, se usan los dibujos incluidos. Si agregás un archivo en `assets/` con
-estos nombres exactos, reemplaza automáticamente al dibujo:
+Ya están cargadas fotos libres de Wikimedia Commons (los créditos salen en el pie de la página).
+Para cambiarlas, reemplazá el archivo en `assets/` con el mismo nombre. Si un archivo falta, se usa el dibujo incluido:
 
-- Producto, PNG con **fondo transparente**: `ps5.png`, `xbox.png`, `pc.png`, `vr.png`, `sim.png`
+- Producto, WebP (o PNG, cambiando la extensión en `ZONES`) con **fondo transparente**: `ps5.webp`, `xbox.webp`, `pc.webp`, `vr.webp`, `sim.webp`
 - Logo de cada marca (se muestra junto al nombre): `logo-ps5.png`, `logo-xbox.png`, `logo-pc.png`, `logo-vr.png`, `logo-sim.png`
 
 Los 404 de estos archivos en la consola del navegador son normales mientras no estén cargados.
