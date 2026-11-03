@@ -74,23 +74,23 @@
   /* ---------- Datos de cada zona ---------- */
   var ZONES = [
     { id: "ps5", img: "assets/ps5.webp", credit: { name: "DualSense", by: "Sonson2", lic: "CC0", url: "https://commons.wikimedia.org/wiki/File:DualSense_Wireless_Controller_Cobalt_Blue.jpg" }, name: "PS5", eyebrow: "PlayStation 5", title: "PS5", art: "ps5",
-      c1: "#4aa8ff", c2: "#1f5bff", bgA: "#0d3a80", bgB: "#050d24",
+      c1: "#00d9ff", c2: "#1a4dff", bgA: "#08195f", bgB: "#01030c",
       desc: "Los mejores juegos de PlayStation 5, con pantalla grande y amigos al lado.",
       s1: ["Modo", "Multijugador"], s2: ["Reserva", "WhatsApp"] },
     { id: "xbox", img: "assets/xbox.webp", credit: { name: "Xbox", by: "Evan-Amos", lic: "Dominio público", url: "https://commons.wikimedia.org/wiki/File:Microsoft-Xbox-One-controller.jpg" }, name: "Xbox", eyebrow: "Xbox", title: "Xbox", art: "xbox",
-      c1: "#9dff3a", c2: "#18c964", bgA: "#0c4a26", bgB: "#04120a",
+      c1: "#39ff14", c2: "#00d95f", bgA: "#064d12", bgB: "#010802",
       desc: "Competí o jugá en equipo en Xbox. Tu consola favorita, sin gastar en ella.",
       s1: ["Modo", "Multijugador"], s2: ["Reserva", "WhatsApp"] },
     { id: "pc", img: "assets/pc.webp", credit: { name: "PC", by: "PantheraLeo1359531", lic: "CC BY 4.0", url: "https://commons.wikimedia.org/wiki/File:Gaming-PC_20240426_HOF2508-HDR_RAW-Export.png" }, name: "PC Gamer", eyebrow: "Gaming PC", title: "PC Gamer", art: "pc",
-      c1: "#ff7ae8", c2: "#ff2bd6", bgA: "#5a0f55", bgB: "#14041a",
+      c1: "#ff39c8", c2: "#ff0a78", bgA: "#5c0a45", bgB: "#0f0109",
       desc: "Equipos armados para jugar. Shooters, MOBAs y todo lo que quieras.",
       s1: ["Estilo", "Competitivo"], s2: ["Reserva", "WhatsApp"] },
     { id: "vr", img: "assets/vr.webp", credit: { name: "Realidad virtual", by: "Evan-Amos", lic: "Dominio público", url: "https://commons.wikimedia.org/wiki/File:Oculus-Rift-CV1-Headset-Front_with_transparent_background.png" }, name: "Realidad Virtual", eyebrow: "Realidad virtual", title: "Realidad Virtual", art: "vr",
-      c1: "#c77dff", c2: "#7b2cff", bgA: "#3b1380", bgB: "#0a0418",
+      c1: "#b86bff", c2: "#6a2cff", bgA: "#2a0d85", bgB: "#05011a",
       desc: "Meté la cabeza en el juego. Una experiencia inmersiva que tenés que probar.",
       s1: ["Experiencia", "Inmersiva"], s2: ["Reserva", "WhatsApp"] },
     { id: "sim", img: "assets/sim.webp", credit: { name: "Volante", by: "Evan-Amos", lic: "Dominio público", url: "https://commons.wikimedia.org/wiki/File:Logitech-Driving-Force-PS3.jpg" }, name: "Simulador F1", eyebrow: "Simu F1", title: "Simulador F1", art: "sim",
-      c1: "#ff8a3d", c2: "#ff2a3a", bgA: "#6b1010", bgB: "#150506",
+      c1: "#ff9d00", c2: "#ff1a3c", bgA: "#5e0d0d", bgB: "#0e0202",
       desc: "Volante, pedales y pista. Sentí la velocidad y buscá la vuelta perfecta.",
       s1: ["Experiencia", "Realista"], s2: ["Reserva", "WhatsApp"] }
   ];
@@ -103,10 +103,10 @@
   var EVENTS = [
     { id: "mk", name: "Mortal Kombat", tag: "Torneo", date: null, time: "",
       desc: "Elegí a tu luchador y demostrá quién manda en la arena.",
-      e1: "#ff3b3b", e2: "#6e0b0b" },
+      e1: "#ff2f3f", e2: "#6e0b0b" },
     { id: "fifa", name: "FIFA 26", tag: "Torneo", date: null, time: "",
       desc: "Torneo de FIFA 26. Armá tu equipo y salí a buscar la copa.",
-      e1: "#3dffb0", e2: "#07503a" }
+      e1: "#17ff8f", e2: "#07503a" }
   ];
 
   var EVENT_ART = {
@@ -123,7 +123,7 @@
   var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var coarse = window.matchMedia("(pointer: coarse)").matches;
   var WORDS = { ps5: "PLAY", xbox: "XBOX", pc: "PC", vr: "VR", sim: "SPEED" };
-  var DEFAULT_ACCENT = { c1: "#ff2bd6", c2: "#8a2be2" };
+  var DEFAULT_ACCENT = { c1: "#ff35e8", c2: "#a24bff" };
 
   /* Resorte (spring) con física real, como los de Framer Motion */
   function Spring(v, k, c) { this.v = v; this.t = v; this.vel = 0; this.k = k || 200; this.c = c || 22; }
@@ -145,6 +145,18 @@
     return h;
   }
 
+  /* Piso de grilla estilo neón: SVG fijo con perspectiva y desvanecido ya dibujados */
+  function floorSvg(color) {
+    var v = "", h = "", i, ys = [0, 10, 26, 50, 84, 132, 200, 300];
+    for (i = -14; i <= 14; i++) v += '<path d="M' + (500 + i * 14) + ' 0L' + (500 + i * 95) + ' 300"/>';
+    ys.forEach(function (y) { h += '<path d="M0 ' + y + 'H1000"/>'; });
+    var svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 300" preserveAspectRatio="none">' +
+      '<defs><linearGradient id="f" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="300">' +
+      '<stop offset="0" stop-color="' + color + '" stop-opacity="0"/><stop offset="1" stop-color="' + color + '" stop-opacity=".5"/>' +
+      '</linearGradient></defs><g fill="none" stroke="url(#f)" stroke-width="1.3" vector-effect="non-scaling-stroke">' + v + h + "</g></svg>";
+    return 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")';
+  }
+
   var host = $("servicios");
   ZONES.forEach(function (z, i) {
     var next = [ZONES[(i + 1) % ZONES.length], ZONES[(i + 2) % ZONES.length]];
@@ -154,6 +166,7 @@
     sec.style.cssText = "--accent:" + z.c2 + ";--accent-2:" + z.c1 + ";--bg-a:" + z.bgA + ";--bg-b:" + z.bgB;
     sec.innerHTML =
       '<div class="hero-bg" aria-hidden="true"></div>' +
+      '<div class="floor" aria-hidden="true" style="background-image:' + floorSvg(z.c1).replace(/"/g, "'") + '"></div>' +
       '<div class="hero-word" aria-hidden="true">' + WORDS[z.id] + "</div>" +
       '<div class="hero-inner">' +
         '<div class="hero-copy">' +
