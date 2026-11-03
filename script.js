@@ -75,24 +75,19 @@
   var ZONES = [
     { id: "ps5", img: "assets/ps5.webp", credit: { name: "DualSense", by: "Sonson2", lic: "CC0", url: "https://commons.wikimedia.org/wiki/File:DualSense_Wireless_Controller_Cobalt_Blue.jpg" }, name: "PS5", eyebrow: "PlayStation 5", title: "PS5", art: "ps5",
       c1: "#00d9ff", c2: "#1a4dff", bgA: "#08195f", bgB: "#01030c",
-      desc: "Los mejores juegos de PlayStation 5, con pantalla grande y amigos al lado.",
-      s1: ["Modo", "Multijugador"], s2: ["Reserva", "WhatsApp"] },
+      desc: "Los mejores juegos de PlayStation 5, con pantalla grande y amigos al lado." },
     { id: "xbox", img: "assets/xbox.webp", credit: { name: "Xbox", by: "Evan-Amos", lic: "Dominio público", url: "https://commons.wikimedia.org/wiki/File:Microsoft-Xbox-One-controller.jpg" }, name: "Xbox", eyebrow: "Xbox", title: "Xbox", art: "xbox",
       c1: "#39ff14", c2: "#00d95f", bgA: "#064d12", bgB: "#010802",
-      desc: "Competí o jugá en equipo en Xbox. Tu consola favorita, sin gastar en ella.",
-      s1: ["Modo", "Multijugador"], s2: ["Reserva", "WhatsApp"] },
+      desc: "Competí o jugá en equipo en Xbox. Tu consola favorita, sin gastar en ella." },
     { id: "pc", img: "assets/pc.webp", credit: { name: "PC", by: "PantheraLeo1359531", lic: "CC BY 4.0", url: "https://commons.wikimedia.org/wiki/File:Gaming-PC_20240426_HOF2508-HDR_RAW-Export.png" }, name: "PC Gamer", eyebrow: "Gaming PC", title: "PC Gamer", art: "pc",
       c1: "#ff39c8", c2: "#ff0a78", bgA: "#5c0a45", bgB: "#0f0109",
-      desc: "Equipos armados para jugar. Shooters, MOBAs y todo lo que quieras.",
-      s1: ["Estilo", "Competitivo"], s2: ["Reserva", "WhatsApp"] },
+      desc: "Equipos armados para jugar. Shooters, MOBAs y todo lo que quieras." },
     { id: "vr", img: "assets/vr.webp", credit: { name: "Realidad virtual", by: "Evan-Amos", lic: "Dominio público", url: "https://commons.wikimedia.org/wiki/File:Oculus-Rift-CV1-Headset-Front_with_transparent_background.png" }, name: "Realidad Virtual", eyebrow: "Realidad virtual", title: "Realidad Virtual", art: "vr",
       c1: "#b86bff", c2: "#6a2cff", bgA: "#2a0d85", bgB: "#05011a",
-      desc: "Meté la cabeza en el juego. Una experiencia inmersiva que tenés que probar.",
-      s1: ["Experiencia", "Inmersiva"], s2: ["Reserva", "WhatsApp"] },
+      desc: "Meté la cabeza en el juego. Una experiencia inmersiva que tenés que probar." },
     { id: "sim", img: "assets/sim.webp", credit: { name: "Volante", by: "Evan-Amos", lic: "Dominio público", url: "https://commons.wikimedia.org/wiki/File:Logitech-Driving-Force-PS3.jpg" }, name: "Simulador F1", eyebrow: "Simu F1", title: "Simulador F1", art: "sim",
       c1: "#ff9d00", c2: "#ff1a3c", bgA: "#5e0d0d", bgB: "#0e0202",
-      desc: "Volante, pedales y pista. Sentí la velocidad y buscá la vuelta perfecta.",
-      s1: ["Experiencia", "Realista"], s2: ["Reserva", "WhatsApp"] }
+      desc: "Volante, pedales y pista. Sentí la velocidad y buscá la vuelta perfecta." }
   ];
 
   /* =====================================================================
@@ -100,22 +95,55 @@
      date: "AAAA-MM-DD" (ej. "2026-11-28"). Si queda en null se muestra
      "Fecha a confirmar". time: texto libre (ej. "18:00 hs").
      ===================================================================== */
-  var EVENTS = [
-    { id: "mk", name: "Mortal Kombat", tag: "Torneo", date: null, time: "",
-      desc: "Elegí a tu luchador y demostrá quién manda en la arena.",
-      e1: "#ff2f3f", e2: "#6e0b0b" },
-    { id: "fifa", name: "FIFA 26", tag: "Torneo", date: null, time: "",
-      desc: "Torneo de FIFA 26. Armá tu equipo y salí a buscar la copa.",
-      e1: "#17ff8f", e2: "#07503a" }
-  ];
+  var DZ = window.DZ || { events: [], winners: [], games: [], gallery: [] };
+  var EVENTS = DZ.events || [];
 
+  /* Ilustraciones originales dibujadas en SVG (no son fotos ni arte oficial de los juegos) */
+  function fighter(accent, flip) {
+    return '<g' + (flip ? ' transform="translate(400 0) scale(-1 1)"' : '') + '>' +
+      '<path d="M30 300C42 238 86 212 130 212C174 212 218 238 230 300Z" fill="#0b0710" stroke="' + accent + '" stroke-width="2.5"/>' +
+      '<path d="M90 150C90 104 110 72 130 52C150 72 170 104 170 150C170 186 152 214 130 214C108 214 90 186 90 150Z" fill="#0b0710" stroke="' + accent + '" stroke-width="3"/>' +
+      '<path d="M97 158H163L154 202C147 214 113 214 106 202Z" fill="' + accent + '"/>' +
+      '<path d="M108 170H152M113 183H147M120 196H140" stroke="#0b0710" stroke-width="3"/>' +
+      '<path d="M96 136L127 146L98 156Z" fill="#fff"/><path d="M164 136L133 146L162 156Z" fill="#fff"/>' +
+      '<path d="M96 136L127 146L98 156Z" fill="' + accent + '" opacity=".45" transform="translate(-4 -4) scale(1.06)"/>' +
+      '</g>';
+  }
+  function slash(x, w) {
+    return '<path d="M' + x + ' -10C' + (x + 60) + ' 90 ' + (x + 70) + ' 190 ' + (x + 40) + ' 310C' + (x + 40) + ' 200 ' + (x + 20) + ' 90 ' + x + ' -10Z" fill="url(#mkS)" opacity="' + w + '"/>';
+  }
   var EVENT_ART = {
-    mk: '<svg viewBox="0 0 300 300" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="16" stroke-linecap="round"><path d="M70 40c40 60 70 130 90 230"/><path d="M130 30c40 60 70 130 90 230"/><path d="M190 40c40 60 60 120 80 200"/></g><circle cx="150" cy="150" r="120" fill="none" stroke="currentColor" stroke-width="6" opacity=".5"/></svg>',
-    fifa: '<svg viewBox="0 0 300 300" aria-hidden="true"><circle cx="150" cy="150" r="130" fill="none" stroke="currentColor" stroke-width="10"/><g fill="currentColor"><path d="M150 95l40 29-15 47h-50l-15-47z"/></g><g fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round"><path d="M150 95V22M190 124l66-24M175 171l40 56M125 171l-40 56M110 124l-66-24"/></g></svg>'
+    mk: '<svg viewBox="0 0 400 300" aria-hidden="true"><defs>' +
+      '<radialGradient id="mkG" cx=".5" cy=".5" r=".6"><stop offset="0" stop-color="#ff5a1f" stop-opacity=".85"/><stop offset=".55" stop-color="#ff1f3a" stop-opacity=".35"/><stop offset="1" stop-color="#ff1f3a" stop-opacity="0"/></radialGradient>' +
+      '<linearGradient id="mkS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffb347"/><stop offset=".5" stop-color="#ff2f3f"/><stop offset="1" stop-color="#ff2f3f" stop-opacity="0"/></linearGradient></defs>' +
+      '<circle cx="200" cy="150" r="190" fill="url(#mkG)"/>' +
+      slash(120, 0.95) + slash(185, 0.8) + slash(250, 0.65) +
+      fighter("#ffc400", false) + fighter("#3de1ff", true) +
+      '<text x="200" y="146" text-anchor="middle" font-family="Tomorrow,Impact,sans-serif" font-style="italic" font-weight="900" font-size="58" fill="#fff" stroke="#ff2f3f" stroke-width="3" paint-order="stroke">VS</text>' +
+      '<g fill="#ff9a3c"><circle cx="48" cy="70" r="2.6"/><circle cx="92" cy="30" r="2"/><circle cx="318" cy="48" r="2.8"/><circle cx="360" cy="110" r="2"/><circle cx="30" cy="150" r="2"/><circle cx="270" cy="22" r="2"/><circle cx="378" cy="186" r="2.4"/><circle cx="14" cy="212" r="2.2"/></g></svg>',
+    fifa: '<svg viewBox="0 0 400 300" aria-hidden="true"><defs>' +
+      '<linearGradient id="fBL" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#dfffee" stop-opacity=".75"/><stop offset="1" stop-color="#17ff8f" stop-opacity="0"/></linearGradient>' +
+      '<linearGradient id="fBR" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#dfffee" stop-opacity=".75"/><stop offset="1" stop-color="#17ff8f" stop-opacity="0"/></linearGradient>' +
+      '<linearGradient id="fGr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b6b3e"/><stop offset="1" stop-color="#021f12"/></linearGradient>' +
+      '<radialGradient id="fBall" cx=".38" cy=".32" r=".8"><stop offset="0" stop-color="#fff"/><stop offset=".7" stop-color="#dfe6ee"/><stop offset="1" stop-color="#8d9bb0"/></radialGradient>' +
+      '<linearGradient id="fStr" x1="1" y1="0" x2="0" y2="0"><stop offset="0" stop-color="#17ff8f" stop-opacity=".9"/><stop offset="1" stop-color="#17ff8f" stop-opacity="0"/></linearGradient>' +
+      '<clipPath id="fClip"><circle cx="0" cy="0" r="72"/></clipPath></defs>' +
+      '<path d="M0 0L175 30L35 300Z" fill="url(#fBL)"/><path d="M400 0L225 30L365 300Z" fill="url(#fBR)"/>' +
+      '<g fill="#e9fff4"><rect x="6" y="4" width="46" height="14" rx="2"/><rect x="348" y="4" width="46" height="14" rx="2"/></g>' +
+      '<path d="M0 300L70 205H330L400 300Z" fill="url(#fGr)"/>' +
+      '<g fill="none" stroke="#17ff8f" stroke-opacity=".55" stroke-width="2"><path d="M200 205V300M70 205H330"/><ellipse cx="200" cy="262" rx="70" ry="16"/></g>' +
+      '<g fill="url(#fStr)"><path d="M10 112L190 124L10 132Z"/><path d="M40 138L200 146L40 152Z"/><path d="M0 162L180 168L0 172Z"/></g>' +
+      '<ellipse cx="262" cy="236" rx="66" ry="9" fill="#000" opacity=".45"/>' +
+      '<g transform="translate(262 150)"><circle r="72" fill="url(#fBall)"/><g clip-path="url(#fClip)" fill="#0b0710" stroke="#0b0710" stroke-width="2">' +
+      '<path d="M0-27L25.7-8.3L15.9 21.8H-15.9L-25.7-8.3Z"/>' +
+      '<path d="M0-72L24-58L16-36H-16L-24-58Z"/><path d="M68-22L72 2L52 14L38-6L46-26Z"/><path d="M42 58L18 66L10 44L30 30L48 40Z"/><path d="M-42 58L-18 66L-10 44L-30 30L-48 40Z"/><path d="M-68-22L-72 2L-52 14L-38-6L-46-26Z"/>' +
+      '<path d="M0-27V-36M25.7-8.3L38-6M15.9 21.8L30 30M-15.9 21.8L-30 30M-25.7-8.3L-38-6" fill="none"/></g>' +
+      '<circle r="72" fill="none" stroke="#17ff8f" stroke-width="3" stroke-opacity=".8"/></g></svg>'
   };
 
   /* ---------- Utilidades ---------- */
   var $ = function (id) { return document.getElementById(id); };
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
   var qs = function (s, c) { return (c || document).querySelector(s); };
   var qsa = function (s, c) { return Array.prototype.slice.call((c || document).querySelectorAll(s)); };
   var clamp = function (n, a, b) { return Math.max(a, Math.min(b, n)); };
@@ -159,7 +187,6 @@
 
   var host = $("servicios");
   ZONES.forEach(function (z, i) {
-    var next = [ZONES[(i + 1) % ZONES.length], ZONES[(i + 2) % ZONES.length]];
     var sec = document.createElement("section");
     sec.className = "service"; sec.id = z.id;
     sec.setAttribute("aria-label", z.name);
@@ -183,17 +210,7 @@
           '<div class="particles" aria-hidden="true">' + particles(i + 1) + "</div>" +
           '<div class="art-in"><div class="art"><div class="tilt" data-art="' + z.id + '" role="img" aria-label="' + z.name + '">' + ART[z.art]("m" + i, z.c1, z.c2) + "</div></div></div>" +
         "</div>" +
-        '<aside class="hero-side">' +
-          '<ul class="thumbs" data-group>' + next.map(function (n, k) {
-            return '<li><a href="#' + n.id + '"><span class="ico" data-art="' + n.id + '">' + ART[n.art]("t" + i + "_" + k, n.c1, n.c2) + "</span><span>" + n.name + "</span></a></li>";
-          }).join("") + "</ul>" +
-          '<div class="stats" data-group>' +
-            '<div class="stat"><small>' + z.s1[0] + "</small><strong>" + z.s1[1] + "</strong></div>" +
-            '<div class="stat"><small>' + z.s2[0] + "</small><strong>" + z.s2[1] + "</strong></div>" +
-          "</div>" +
-        "</aside>" +
       "</div>" +
-      '<span class="counter" aria-hidden="true">0' + (i + 1) + " / 0" + ZONES.length + "</span>" +
       (i === 0 ? '<div class="scroll-hint" aria-hidden="true"><span>Scroll</span><i></i></div>' : "") +
       '<div class="shade" aria-hidden="true"></div>';
     host.appendChild(sec);
@@ -242,14 +259,14 @@
   /* ---------- Eventos ---------- */
   var MONTHS = ["ENE", "FEB", "MAR", "ABR", "MAY", "JUN", "JUL", "AGO", "SEP", "OCT", "NOV", "DIC"];
   function eventDate(ev) {
-    if (!ev.date) return { html: '<div class="event-date tbd"><b>Fecha a<br>confirmar</b></div>', count: "" };
+    if (!ev.date) return { html: '<div class="event-date tbd"><b>Fecha a<br>confirmar</b></div>', count: "", day: null };
     var p = ev.date.split("-"), d = new Date(+p[0], +p[1] - 1, +p[2]);
     var today = new Date(); today.setHours(0, 0, 0, 0);
     var days = Math.round((d - today) / 86400000);
     var count = days > 1 ? "Faltan " + days + " días" : days === 1 ? "¡Mañana!" : days === 0 ? "¡Es hoy!" : "Evento finalizado";
     return {
       html: '<div class="event-date"><b>' + d.getDate() + "</b><span>" + MONTHS[d.getMonth()] + "</span>" + (ev.time ? "<small>" + ev.time + "</small>" : "") + "</div>",
-      count: count
+      count: count, day: d.getDate(), mon: MONTHS[d.getMonth()]
     };
   }
   var evHost = $("event-cards");
@@ -259,12 +276,119 @@
     var a = document.createElement("article");
     a.className = "event"; a.style.cssText = "--e1:" + ev.e1 + ";--e2:" + ev.e2;
     a.innerHTML =
-      '<div class="event-art" style="color:' + ev.e1 + '">' + EVENT_ART[ev.id] + "</div>" +
+      '<div class="event-art">' + EVENT_ART[ev.id] + "</div>" +
       "<div><span class=\"chip\">" + ev.tag + "</span><h3>" + ev.name + "</h3><p>" + ev.desc + "</p></div>" +
       dt.html +
       '<div class="event-foot"><a class="btn" data-magnet data-wa data-msg="' + msg + '" href="#">Anotarme</a>' +
       (dt.count ? '<span class="countdown">' + dt.count + "</span>" : "") + "</div>";
     evHost.appendChild(a);
+    if (ev.img) {  /* si existe la imagen del banner, reemplaza a la ilustración */
+      var im = new Image();
+      im.onload = function () {
+        a.className = "banner"; a.style.cssText = "--e1:" + ev.e1;
+        a.innerHTML = '<a class="banner-link" href="' + waLink(msg) + '" target="_blank" rel="noopener" aria-label="Anotarme al torneo de ' + esc(ev.name) + '">' +
+          '<img src="' + esc(ev.img) + '" alt="' + esc(ev.name + " - " + ev.tag) + '"></a>' +
+          '<div class="banner-date' + (dt.day ? "" : " tbd") + '">' +
+          (dt.day ? "<b>" + dt.day + "</b><span>" + dt.mon + "</span><small>" + esc((ev.time ? ev.time + " · " : "") + dt.count) + "</small>"
+                  : '<i aria-hidden="true">✓</i><span>Fecha a<br>confirmar</span>') + "</div>";
+      };
+      im.src = ev.img;
+    }
+  });
+
+
+  /* ---------- Salón de la fama (ganadores históricos) ---------- */
+  (function () {
+    var host = $("hof");
+    var W = (DZ.winners || []).slice().sort(function (a, b) { return String(b.fecha || "").localeCompare(String(a.fecha || "")); });
+    var trophy = '<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M14 6h20v10c0 8-4 13-10 14-6-1-10-6-10-14V6Z" fill="currentColor"/><path d="M14 10H6c0 8 4 12 9 13M34 10h8c0 8-4 12-9 13" fill="none" stroke="currentColor" stroke-width="3"/><path d="M24 30v8M16 42h16l-2-4H18Z" fill="currentColor"/></svg>';
+    var head = "<h3>" + trophy + "Salón de la fama</h3>";
+    if (!W.length) {
+      host.innerHTML = head + '<div class="hof-empty"><p><b>Todavía no hay campeones cargados.</b> Acá van a aparecer los ganadores de cada torneo. ¡El primero puede ser vos!</p>' +
+        '<a class="btn" data-magnet data-wa data-msg="Hola! Quiero anotarme al próximo torneo de Danger Zone." href="#">Quiero competir</a></div>';
+      return;
+    }
+    var fmt = function (s) { var p = String(s || "").split("-"); return p.length === 3 ? p[2] + "/" + p[1] + "/" + p[0] : esc(s); };
+    host.innerHTML = head + '<table class="hof-table"><thead><tr><th>Fecha</th><th>Torneo</th><th>Campeón</th><th>Subcampeón</th></tr></thead><tbody>' +
+      W.map(function (w, i) {
+        return '<tr' + (i === 0 ? ' class="latest"' : "") + '><td data-l="Fecha">' + fmt(w.fecha) + '</td><td data-l="Torneo">' + esc(w.torneo) +
+          '</td><td data-l="Campeón" class="champ">🏆 ' + esc(w.ganador) + '</td><td data-l="Subcampeón">' + esc(w.segundo || "—") + "</td></tr>";
+      }).join("") + "</tbody></table>";
+  })();
+
+  /* ---------- Juegos disponibles (grilla con filtro) + pedir juegos ---------- */
+  (function () {
+    var G = DZ.games || [], PLAT = { PS5: "ps5", Xbox: "xbox", PC: "pc", VR: "vr", Simulador: "sim" };
+    var zone = function (p) { return ZONES.filter(function (z) { return z.id === PLAT[p]; })[0] || { c1: "#ff35e8", c2: "#a24bff" }; };
+    var COLORS = { blue: ["#00d9ff", "#1a4dff"], red: ["#ff2f3f", "#8a0a1a"], green: ["#39ff14", "#00a84a"], pink: ["#ff39c8", "#ff0a78"], violet: ["#b86bff", "#6a2cff"], orange: ["#ff9d00", "#ff1a3c"] };
+    var ORDER = ["blue", "red", "green", "pink", "violet", "orange"];
+    var host = $("games"), fh = $("filters");
+    fh.innerHTML = ["Todos"].concat(Object.keys(PLAT)).map(function (p, i) {
+      return '<button type="button" class="filter' + (i === 0 ? " on" : "") + '" data-p="' + p + '">' + p + "</button>";
+    }).join("");
+    host.innerHTML = G.length ? G.map(function (g, i) {
+      var col = COLORS[g.color] || COLORS[ORDER[i % ORDER.length]], z = { c1: col[0], c2: col[1] }, soon = g.estado === "pronto";
+      return '<article class="game" data-plat="' + esc(g.plat.join("|")) + '" style="--g1:' + z.c1 + ";--g2:" + z.c2 + '">' +
+        '<div class="game-cover"><b>' + esc(g.name) + '</b></div><div class="game-body"><span class="genre">' + esc(g.genre || "") + "</span>" +
+        '<div class="plats">' + g.plat.map(function (p) { return '<span class="plat" style="--c:' + zone(p).c1 + '">' + esc(p) + "</span>"; }).join("") + "</div>" +
+        '<span class="state ' + (soon ? "soon" : "ok") + '">' + (soon ? "Próximamente" : "Disponible") + "</span></div></article>";
+    }).join("") : '<p class="muted">Pronto vamos a publicar el catálogo de juegos.</p>';
+    fh.addEventListener("click", function (e) {
+      var b = e.target.closest(".filter"); if (!b) return;
+      qsa(".filter", fh).forEach(function (x) { x.classList.toggle("on", x === b); });
+      var p = b.getAttribute("data-p");
+      qsa(".game", host).forEach(function (c) { c.hidden = !(p === "Todos" || c.getAttribute("data-plat").split("|").indexOf(p) > -1); });
+    });
+
+    var f = $("request"), m = $("r-msg");
+    f.elements.game.addEventListener("input", function () { f.elements.game.classList.remove("bad"); });
+    f.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var g = f.elements.game.value.trim();
+      f.elements.game.classList.toggle("bad", !g);
+      if (!g) { m.textContent = "Escribí el nombre del juego que querés."; f.elements.game.focus(); return; }
+      m.textContent = "";
+      var lines = ["Hola! Me gustaría que sumen un juego en Danger Zone.", "• Juego: " + g, "• Plataforma: " + f.elements.plat.value];
+      if (f.elements.name.value.trim()) lines.push("• Nombre: " + f.elements.name.value.trim());
+      window.open(waLink(lines.join("\n")), "_blank", "noopener");
+    });
+  })();
+
+  /* ---------- Galería con visor ---------- */
+  (function () {
+    var P = DZ.gallery || [], host = $("gallery");
+    var cam = '<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M6 14h9l3-5h12l3 5h9v26H6Z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/><circle cx="24" cy="26" r="8" fill="none" stroke="currentColor" stroke-width="3"/></svg>';
+    if (!P.length) {
+      host.innerHTML = ZONES.concat(ZONES.slice(0, 1)).map(function (z) {
+        return '<div class="shot ph" style="--g1:' + z.c1 + ";--g2:" + z.c2 + '">' + cam + "<span>Tu foto acá</span></div>";
+      }).join("");
+      return;
+    }
+    host.innerHTML = P.map(function (p, i) {
+      return '<button type="button" class="shot" data-i="' + i + '"><img src="' + esc(p.src) + '" alt="' + esc(p.alt || "") + '" loading="lazy">' + (p.caption ? "<span>" + esc(p.caption) + "</span>" : "") + "</button>";
+    }).join("");
+    var lb = $("lb"), li = $("lb-img"), lc = $("lb-cap"), cur = 0;
+    function show(i) {
+      cur = (i + P.length) % P.length; li.src = P[cur].src; li.alt = P[cur].alt || ""; lc.textContent = P[cur].caption || "";
+      lb.hidden = false; document.body.style.overflow = "hidden";
+    }
+    function hide() { lb.hidden = true; document.body.style.overflow = ""; }
+    host.addEventListener("click", function (e) { var b = e.target.closest(".shot[data-i]"); if (b) show(+b.getAttribute("data-i")); });
+    qs(".lb-x", lb).addEventListener("click", hide);
+    qs(".lb-prev", lb).addEventListener("click", function () { show(cur - 1); });
+    qs(".lb-next", lb).addEventListener("click", function () { show(cur + 1); });
+    lb.addEventListener("click", function (e) { if (e.target === lb) hide(); });
+    document.addEventListener("keydown", function (e) {
+      if (lb.hidden) return;
+      if (e.key === "Escape") hide(); else if (e.key === "ArrowLeft") show(cur - 1); else if (e.key === "ArrowRight") show(cur + 1);
+    });
+  })();
+
+  /* Botones: la forma angulosa (clip-path) va en la cara; el brillo de neón, afuera */
+  qsa(".btn").forEach(function (b) {
+    var f = document.createElement("span"); f.className = "face";
+    while (b.firstChild) f.appendChild(b.firstChild);
+    b.appendChild(f);
   });
 
   /* ---------- WhatsApp ---------- */
@@ -418,7 +542,7 @@
 
   var P = panels.map(function (sec) {
     return {
-      sec: sec, word: qs(".hero-word", sec), copy: qs(".hero-copy", sec), side: qs(".hero-side", sec),
+      sec: sec, word: qs(".hero-word", sec), copy: qs(".hero-copy", sec),
       stage: qs(".hero-stage", sec), shade: qs(".shade", sec),
       v: 0, cover: 0, vis: false, top0: 0, h: 0, sig: ""
     };
@@ -430,7 +554,7 @@
     return { el: el, x: new Spring(0, 220, 16), y: new Spring(0, 220, 16), moving: false };
   });
   var gx = new Spring(innerWidth / 2, 90, 18), gy = new Spring(innerHeight / 2, 90, 18), glowOn = false;
-  var secs = ["servicios", "eventos", "turnos", "visitanos"].map(function (id) { return { id: id, el: $(id), t: 0, b: 0 }; });
+  var secs = ["servicios", "eventos", "juegos", "galeria", "turnos", "visitanos"].map(function (id) { return { id: id, el: $(id), t: 0, b: 0 }; });
 
   var G = { vh: 0, vw: 0, contTop: 0, contH: 0, docMax: 0, stack: false };
   var currentSec = null, currentPanel = -2;
@@ -485,7 +609,6 @@
     p.word.style.transform = "translate(calc(-50% + " + (v * G.vw * 0.16).toFixed(1) + "px), -50%) rotate(-6deg)";
     var op = Math.max(0, 1 - c * 1.1).toFixed(3);
     p.copy.style.transform = "translate3d(0," + (v * 60).toFixed(1) + "px,0)"; p.copy.style.opacity = op;
-    p.side.style.transform = "translate3d(0," + (v * 40).toFixed(1) + "px,0)"; p.side.style.opacity = op;
     p.stage.style.transform = "translate3d(0," + (v * 110).toFixed(1) + "px,0) scale(" + (1 - c * 0.08).toFixed(4) + ")";
     if (G.stack) { p.sec.style.transform = "scale(" + (1 - c * 0.06).toFixed(4) + ")"; p.shade.style.opacity = (c * 0.55).toFixed(3); }
   }
