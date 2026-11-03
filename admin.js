@@ -6,7 +6,7 @@
   var GASTOS = ["Sueldos", "Alquiler", "Servicios", "Mercadería", "Mantenimiento", "Publicidad", "Otros"];
   var COLOR = { "PS5": "#00d9ff", "Xbox": "#39ff14", "PC": "#ff39c8", "Realidad Virtual": "#b86bff", "Simulador": "#ff9d00", "Comida": "#ffd84d", "Bebida": "#5ee7ff", "Cumpleaños": "#ff7ab8", "Jugadores casuales": "#9aa8ff", "Eventos": "#ff4d5e" };
   var S = { more: 20, demo: false, url: "", clave: "", range: "mes", tab: "ingresos", data: { ingresos: [], egresos: [], reservas: [], pedidos: [] } };
-  var $m = function (n) { return "$ " + Math.round(+n || 0).toLocaleString("es-AR"); };
+  var $m = function (n) { return "$\u00a0" + Math.round(+n || 0).toLocaleString("es-AR"); };
   var today = function () { var d = new Date(); return d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2); };
   var esc = function (s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
   function toast(t) { var e = $("toast"); e.textContent = t; e.hidden = false; setTimeout(function () { e.hidden = true; }, 2200); }

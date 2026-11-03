@@ -28,9 +28,9 @@ input:focus,select:focus{outline:2px solid var(--pink);border-color:transparent}
 .period button,.tabs button{border:1px solid var(--line);background:var(--panel);color:var(--muted);padding:10px 16px;border-radius:99px;font:600 .9rem var(--body);cursor:pointer}
 .period .on,.tabs .on{background:var(--pink);color:#0a0612;border-color:var(--pink)}
 .quick{display:flex;flex-wrap:wrap;gap:12px}
-.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:12px}
 .kpi{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px;border-top:3px solid var(--c,var(--cyan))}
-.kpi small{display:block;color:var(--muted);font-size:.8rem}.kpi b{display:block;font:italic 800 clamp(1.4rem,3.2vw,1.9rem) var(--disp);margin:2px 0}
+.kpi small{display:block;color:var(--muted);font-size:.8rem}.kpi b{display:block;white-space:nowrap;font:italic 800 clamp(1.05rem,1.75vw,1.5rem) var(--disp);margin:2px 0}
 .kpi i{font-style:normal;font-size:.75rem;color:var(--muted)}
 .todo h2,.charts h2{font-size:1rem;margin-bottom:12px}
 .todo .item{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;padding:12px 0;border-top:1px solid var(--line)}
