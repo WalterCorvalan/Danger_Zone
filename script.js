@@ -79,7 +79,7 @@
     { id: "xbox", img: "assets/xbox.webp", credit: { name: "Xbox", by: "Evan-Amos", lic: "Dominio público", url: "https://commons.wikimedia.org/wiki/File:Microsoft-Xbox-One-controller.jpg" }, name: "Xbox", eyebrow: "Xbox", title: "Xbox", art: "xbox",
       c1: "#39ff14", c2: "#00d95f", bgA: "#064d12", bgB: "#010802",
       desc: "Competí o jugá en equipo en Xbox. Tu consola favorita, sin gastar en ella." },
-    { id: "pc", img: "assets/pc.webp", credit: { name: "PC", by: "PantheraLeo1359531", lic: "CC BY 4.0", url: "https://commons.wikimedia.org/wiki/File:Gaming-PC_20240426_HOF2508-HDR_RAW-Export.png" }, name: "PC Gamer", eyebrow: "Gaming PC", title: "PC Gamer", art: "pc",
+    { id: "pc", img: "assets/pc.webp", name: "PC Gamer", eyebrow: "Gaming PC", title: "PC Gamer", art: "pc",
       c1: "#ff39c8", c2: "#ff0a78", bgA: "#5c0a45", bgB: "#0f0109",
       desc: "Equipos armados para jugar. Shooters, MOBAs y todo lo que quieras." },
     { id: "vr", img: "assets/vr.webp", credit: { name: "Realidad virtual", by: "Evan-Amos", lic: "Dominio público", url: "https://commons.wikimedia.org/wiki/File:Oculus-Rift-CV1-Headset-Front_with_transparent_background.png" }, name: "Realidad Virtual", eyebrow: "Realidad virtual", title: "Realidad Virtual", art: "vr",
