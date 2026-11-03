@@ -13,10 +13,10 @@ window.DZ = {
   events: [
     { id: "mk", name: "Mortal Kombat", tag: "Torneo", date: null, time: "",
       desc: "Elegí a tu luchador y demostrá quién manda en la arena.",
-      img: "assets/evento-mk.png", e1: "#ff2f3f", e2: "#6e0b0b" },
+      img: "assets/evento-mk.webp", e1: "#ff2f3f", e2: "#6e0b0b" },
     { id: "fifa", name: "FIFA 26", tag: "Torneo", date: null, time: "",
       desc: "Torneo de FIFA 26. Armá tu equipo y salí a buscar la copa.",
-      img: "assets/evento-fifa.png", e1: "#17ff8f", e2: "#07503a" }
+      img: "assets/evento-fifa.webp", e1: "#17ff8f", e2: "#07503a" }
   ],
 
   /* ---------- SALÓN DE LA FAMA (ganadores históricos) ----------

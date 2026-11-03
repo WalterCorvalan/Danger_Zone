@@ -289,7 +289,7 @@
         a.innerHTML = '<a class="banner-link" href="' + waLink(msg) + '" target="_blank" rel="noopener" aria-label="Anotarme al torneo de ' + esc(ev.name) + '">' +
           '<img src="' + esc(ev.img) + '" alt="' + esc(ev.name + " - " + ev.tag) + '"></a>' +
           '<div class="banner-date' + (dt.day ? "" : " tbd") + '">' +
-          (dt.day ? "<b>" + dt.day + "</b><span>" + dt.mon + "</span><small>" + esc((ev.time ? ev.time + " · " : "") + dt.count) + "</small>"
+          (dt.day ? "<b>" + dt.day + "</b><span>" + dt.mon + "</span><small>" + esc(ev.time || "") + (ev.time ? "<br>" : "") + esc(dt.count) + "</small>"
                   : '<i aria-hidden="true">✓</i><span>Fecha a<br>confirmar</span>') + "</div>";
       };
       im.src = ev.img;

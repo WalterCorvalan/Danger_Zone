@@ -34,7 +34,7 @@ Los formularios (turnos, cumpleaños y pedir juegos) **no guardan nada en un ser
 
 ## Banners de los eventos
 
-Si existen `assets/evento-mk.png` y `assets/evento-fifa.png`, reemplazan a las ilustraciones de las tarjetas.
+Si existen `assets/evento-mk.webp` y `assets/evento-fifa.webp`, reemplazan a las ilustraciones de las tarjetas.
 Cada imagen es la tarjeta completa, recortada sin el margen oscuro. La caja de la fecha (arriba a la derecha)
 la tapa la web con la fecha real que se carga en `data.js`, y toda la imagen es un link a WhatsApp.
 

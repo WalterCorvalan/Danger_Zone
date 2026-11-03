@@ -340,13 +340,13 @@ h2 em .wi { background: linear-gradient(90deg, var(--magenta), var(--purple)); -
 .banner-link { display: block; }
 .banner-link img { display: block; width: 100%; height: auto; }
 .banner-date {  /* tapa la caja "Fecha a confirmar" dibujada en la imagen y muestra la fecha real */
-  position: absolute; top: 3.2%; right: 2.2%; width: 23.5%; min-height: 17.5%; padding: 4px 6px; display: grid; place-content: center; justify-items: center; text-align: center;
-  background: rgba(8, 8, 16, .97); border: 1px solid color-mix(in srgb, var(--e1) 75%, transparent); border-radius: 10px; box-shadow: 0 0 14px -4px var(--e1);
+  position: absolute; top: 3.4%; right: 2%; width: 22.6%; min-height: 17%; padding: 4px 6px; display: grid; place-content: center; justify-items: center; text-align: center;
+  background: rgb(8, 8, 16); border: 1px solid color-mix(in srgb, var(--e1) 75%, transparent); border-radius: 10px; box-shadow: 0 0 14px -4px var(--e1);
   font-family: var(--display); font-style: italic; font-weight: 700; font-size: clamp(.58rem, 1.35vw, .98rem); line-height: 1.1; pointer-events: none;
 }
 .banner-date b { font-weight: 800; font-size: 2.1em; line-height: 1; }
 .banner-date span { color: var(--e1); letter-spacing: .14em; }
-.banner-date small { font-size: .62em; font-weight: 600; color: var(--muted); }
+.banner-date small { font-size: .6em; font-weight: 600; line-height: 1.25; color: var(--muted); }
 .banner-date i { font-style: normal; color: var(--e1); font-size: 1.3em; }
 .banner-date.tbd { grid-auto-flow: column; gap: .5em; place-content: center; }
 
