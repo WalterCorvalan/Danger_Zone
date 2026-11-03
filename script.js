@@ -73,7 +73,7 @@
 
   /* ---------- Datos de cada zona ---------- */
   var ZONES = [
-    { id: "ps5", img: "assets/ps5.png", logo: "assets/logo-ps5.png", name: "PS5", eyebrow: "PlayStation 5", title: "PS5", art: "ps5",
+    { id: "ps5", img: "assets/ps5.png", logo: "assets/logo-ps5.png", credit: { name: "DualSense", by: "Sonson2", lic: "CC0", url: "https://commons.wikimedia.org/wiki/File:DualSense_Wireless_Controller_Cobalt_Blue.jpg" }, name: "PS5", eyebrow: "PlayStation 5", title: "PS5", art: "ps5",
       c1: "#4aa8ff", c2: "#1f5bff", bgA: "#0d3a80", bgB: "#050d24",
       desc: "Los mejores juegos de PlayStation 5, con pantalla grande y amigos al lado.",
       s1: ["Modo", "Multijugador"], s2: ["Reserva", "WhatsApp"] },
@@ -186,6 +186,16 @@
     host.appendChild(sec);
   });
 
+  /* Créditos de las fotos (solo aparecen las que se cargaron) */
+  function addCredit(z) {
+    var box = document.getElementById("credits");
+    if (!box || !z.credit) return;
+    box.hidden = false;
+    var s = document.createElement("span");
+    s.innerHTML = z.credit.name + ': <a href="' + z.credit.url + '" target="_blank" rel="noopener">' + z.credit.by + "</a> (" + z.credit.lic + ")";
+    box.appendChild(s);
+  }
+
   /* Imágenes reales: si existe el archivo, reemplaza al dibujo (ver README) */
   ZONES.forEach(function (z) {
     if (z.img) {
@@ -194,6 +204,7 @@
         qsa('[data-art="' + z.id + '"]').forEach(function (w) {
           w.innerHTML = '<img class="photo" src="' + z.img + '" alt="" draggable="false">';
         });
+        addCredit(z);
       };
       im.src = z.img;
     }
