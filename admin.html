@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Panel · Danger Zone</title>
+  <link rel="icon" href="assets/logo.png">
+  <link href="https://fonts.googleapis.com/css2?family=Tomorrow:ital,wght@1,700;1,800;1,900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+<!-- PASO 1: conectar -->
+<main id="login" class="login">
+  <img src="assets/logo.png" alt="" width="84" height="84">
+  <h1>Panel de <em>Danger Zone</em></h1>
+  <p class="sub">Acá ves las ventas, los gastos, las reservas y cuánta gente viene.</p>
+  <form id="loginForm" class="card" autocomplete="off">
+    <label>Dirección de la planilla <small>(la que te dio Google al instalar)</small>
+      <input id="url" placeholder="https://script.google.com/macros/s/..." inputmode="url"></label>
+    <label>Clave
+      <input id="clave" type="password" placeholder="La clave que elegiste"></label>
+    <p id="loginMsg" class="msg" role="status"></p>
+    <button class="ab" type="submit"><span>Entrar</span></button>
+  </form>
+  <button id="demoBtn" class="link" type="button">¿Todavía no la tenés? Ver cómo se ve con datos de ejemplo</button>
+</main>
+
+<!-- PANEL -->
+<div id="app" hidden>
+  <header class="top">
+    <div class="brand"><img src="assets/logo.png" alt="" width="38" height="38"><b>Panel</b><span id="badge" class="badge" hidden>DATOS DE EJEMPLO</span></div>
+    <div class="period" id="period" role="group" aria-label="Período">
+      <button data-r="hoy">Hoy</button><button data-r="semana">Esta semana</button><button data-r="mes" class="on">Este mes</button><button data-r="todo">Todo</button>
+    </div>
+    <div class="topbtns"><button id="refresh" class="link" type="button">↻ Actualizar</button><button id="exit" class="link" type="button">Salir</button></div>
+  </header>
+
+  <div class="quick">
+    <button class="ab green" data-new="ingresos"><span>＋ Anotar una venta</span></button>
+    <button class="ab pink" data-new="egresos"><span>＋ Anotar un gasto</span></button>
+    <button class="ab violet" data-new="reservas"><span>＋ Nueva reserva</span></button>
+  </div>
+
+  <section class="kpis" id="kpis"></section>
+
+  <section class="todo card" id="todo"></section>
+
+  <section class="charts">
+    <article class="card"><h2>¿A qué hora viene más gente?</h2><div id="chHours"></div></article>
+    <article class="card"><h2>¿Cuánto entra por cada cosa?</h2><div id="chCats"></div></article>
+    <article class="card wide"><h2>Lo que entra y lo que sale, día por día</h2><div id="chFlow"></div></article>
+  </section>
+
+  <section class="lists">
+    <div class="tabs" id="tabs" role="tablist">
+      <button data-t="ingresos" class="on">Ventas</button><button data-t="egresos">Gastos</button><button data-t="reservas">Reservas</button><button data-t="pedidos">Juegos pedidos</button>
+    </div>
+    <div class="card" id="list"></div>
+  </section>
+</div>
+
+<!-- Ventana para anotar -->
+<dialog id="dlg"><form method="dialog" id="dlgForm"><h3 id="dlgTitle"></h3><div id="dlgFields"></div><p id="dlgMsg" class="msg"></p>
+  <div class="dlgbtns"><button class="link" value="cancel" type="button" id="dlgCancel">Cancelar</button><button class="ab" type="submit"><span>Guardar</span></button></div></form></dialog>
+<div id="toast" class="toast" hidden></div>
+
+<script src="admin.js"></script>
+</body>
+</html>

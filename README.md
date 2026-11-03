@@ -43,3 +43,19 @@ la tapa la web con la fecha real que se carga en `data.js`, y toda la imagen es 
 Ya están cargadas fotos libres de Wikimedia Commons (los créditos salen en el pie de la página).
 Para cambiarlas, reemplazá el archivo en `assets/` con el mismo nombre (`ps5.webp`, `xbox.webp`, `pc.webp`,
 `vr.webp`, `sim.webp`, con fondo transparente). Si un archivo falta, se usa el dibujo incluido.
+
+## Panel de gestión (`admin.html`)
+
+Ventas, gastos, reservas, cumpleaños, horarios con más gente e ingresos por categoría. Los datos quedan en una **planilla de Google** de ustedes.
+Para probarlo sin instalar nada: abrir `admin.html` y tocar "Ver cómo se ve con datos de ejemplo".
+
+Instalación (una vez, unos 5 minutos):
+1. Crear una planilla nueva en Google Sheets.
+2. Menú **Extensiones → Apps Script**. Borrar lo que haya y pegar el contenido de `apps-script/Code.gs`.
+3. En la primera línea, cambiar `cambiar-esta-clave` por una clave propia.
+4. Elegir la función `setup` y tocar **Ejecutar** (acepta los permisos). Crea las pestañas solas.
+5. **Implementar → Nueva implementación → Aplicación web**. Ejecutar como: *yo*. Quién tiene acceso: *cualquier persona*. Copiar la dirección que termina en `/exec`.
+6. Abrir `admin.html`, pegar esa dirección y la clave, y entrar.
+7. Para que los formularios de la web anoten solos: pegar la misma dirección en `api:` de `data.js`.
+
+Los visitantes de la web solo pueden **agregar** reservas y pedidos. Leer, borrar o editar requiere la clave.

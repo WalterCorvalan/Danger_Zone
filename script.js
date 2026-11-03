@@ -350,6 +350,7 @@
       m.textContent = "";
       var lines = ["Hola! Me gustaría que sumen un juego en Danger Zone.", "• Juego: " + g, "• Plataforma: " + f.elements.plat.value];
       if (f.elements.name.value.trim()) lines.push("• Nombre: " + f.elements.name.value.trim());
+      anotar("pedido", { juego: g, plataforma: f.elements.plat.value, nombre: f.elements.name.value.trim() });
       window.open(waLink(lines.join("\n")), "_blank", "noopener");
     });
   })();
@@ -392,6 +393,11 @@
   });
 
   /* ---------- WhatsApp ---------- */
+  /* Anota en la planilla de Google (si está configurada en data.js). No frena el envío a WhatsApp. */
+  function anotar(action, fila) {
+    if (!DZ.api) return;
+    try { fetch(DZ.api, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ action: action, fila: fila }) }); } catch (e) {}
+  }
   function waLink(text) { return "https://wa.me/" + WA_NUMBER + "?text=" + encodeURIComponent(text || WA_TEXT); }
   qsa("[data-wa]").forEach(function (a) {
     a.href = waLink(a.getAttribute("data-msg")); a.target = "_blank"; a.rel = "noopener";
@@ -457,6 +463,8 @@
       lines.push("• " + (cumple ? "Invitados (aprox.)" : "Personas") + ": " + (form.elements.people.value || "-"));
       if (cumple && form.elements.age.value) lines.push("• Cumpleañero/a cumple: " + form.elements.age.value);
       if (form.elements.notes.value.trim()) lines.push("• Comentarios: " + form.elements.notes.value.trim());
+      anotar("reserva", { fecha: dateEl.value, hora: timeEl.value, tipo: cumple ? "cumple" : "turno", zona: cumple ? "" : form.elements.zone.value,
+        nombre: form.elements.name.value.trim(), personas: form.elements.people.value, nota: form.elements.notes.value.trim() + (cumple && form.elements.age.value ? " (cumple " + form.elements.age.value + ")" : "") });
       window.open(waLink(lines.join("\n")), "_blank", "noopener");
     });
     [form.elements.name, dateEl, timeEl].forEach(function (el) {

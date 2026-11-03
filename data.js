@@ -5,6 +5,12 @@
    ===================================================================== */
 window.DZ = {
 
+  /* ---------- PLANILLA DE GOOGLE (opcional) ----------
+     Pegar acá la dirección que da Google al instalar el panel (ver README).
+     Con eso, las reservas, cumpleaños y pedidos de juegos de la web quedan
+     anotados solos en la planilla y aparecen en admin.html. */
+  api: "",
+
   /* ---------- PRÓXIMOS EVENTOS ----------
      date: "AAAA-MM-DD" (ej. "2026-11-28"). Si queda en null dice "Fecha a confirmar".
      time: texto libre (ej. "18:00 hs").
