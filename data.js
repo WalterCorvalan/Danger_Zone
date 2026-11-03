@@ -14,15 +14,16 @@ window.DZ = {
   /* ---------- PRÓXIMOS EVENTOS ----------
      date: "AAAA-MM-DD" (ej. "2026-11-28"). Si queda en null dice "Fecha a confirmar".
      time: texto libre (ej. "18:00 hs").
+     bc:   color de los botones sobre el banner.
      img:  imagen del banner (opcional). Si el archivo existe en assets/, se usa
            en lugar de la ilustración. Ver README. */
   events: [
     { id: "mk", name: "Mortal Kombat 11", tag: "Torneo", date: null, time: "",
       desc: "Elegí a tu luchador y demostrá quién manda en la arena.",
-      img: "assets/evento-mk.webp", e1: "#ff2f3f", e2: "#6e0b0b" },
+      img: "assets/evento-mk.webp", bc: "#ff2f3f", e1: "#ff2f3f", e2: "#6e0b0b" },
     { id: "fifa", name: "F26", tag: "Torneo", date: null, time: "",
       desc: "Torneo de F26. Armá tu equipo y salí a buscar la copa.",
-      img: "assets/evento-fifa.webp", e1: "#17ff8f", e2: "#07503a" }
+      img: "assets/evento-fifa.webp", bc: "#2f8bff", e1: "#17ff8f", e2: "#07503a" }
   ],
 
   /* ---------- SALÓN DE LA FAMA (ganadores históricos) ----------

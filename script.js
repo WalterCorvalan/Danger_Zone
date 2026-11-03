@@ -285,12 +285,13 @@
     if (ev.img) {  /* si existe la imagen del banner, reemplaza a la ilustración */
       var im = new Image();
       im.onload = function () {
-        a.className = "banner"; a.style.cssText = "--e1:" + ev.e1;
-        a.innerHTML = '<a class="banner-link" href="' + waLink(msg) + '" target="_blank" rel="noopener" aria-label="Anotarme al torneo de ' + esc(ev.name) + '">' +
-          '<img src="' + esc(ev.img) + '" alt="' + esc(ev.name + " - " + ev.tag) + '"></a>' +
+        a.className = "banner"; a.style.cssText = "--e1:" + (ev.bc || ev.e1);
+        a.innerHTML = '<img src="' + esc(ev.img) + '" alt="' + esc(ev.name + " - " + ev.tag) + '">' +
+          '<span class="chip banner-chip">' + esc(ev.tag) + "</span>" +
           '<div class="banner-date' + (dt.day ? "" : " tbd") + '">' +
           (dt.day ? "<b>" + dt.day + "</b><span>" + dt.mon + "</span><small>" + esc(ev.time || "") + (ev.time ? "<br>" : "") + esc(dt.count) + "</small>"
-                  : '<i aria-hidden="true">✓</i><span>Fecha a<br>confirmar</span>') + "</div>";
+                  : '<i aria-hidden="true">✓</i><span>Fecha a<br>confirmar</span>') + "</div>" +
+          '<a class="btn banner-btn" href="' + waLink(msg) + '" target="_blank" rel="noopener" data-magnet><span class="face">Anotarme</span></a>';
       };
       im.src = ev.img;
     }

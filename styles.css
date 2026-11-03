@@ -337,8 +337,12 @@ h2 em .wi { background: linear-gradient(90deg, var(--magenta), var(--purple)); -
 /* ---------- Banners de eventos (cuando existe la imagen) ---------- */
 .banner { position: relative; transition: transform .5s var(--spring), filter .4s; filter: drop-shadow(0 10px 24px color-mix(in srgb, var(--e1) 30%, transparent)); }
 .banner:hover { transform: translateY(-6px); filter: drop-shadow(0 18px 34px color-mix(in srgb, var(--e1) 55%, transparent)); }
-.banner-link { display: block; }
-.banner-link img { display: block; width: 100%; height: auto; }
+.banner > img { display: block; width: 100%; height: auto; }
+.banner-chip { position: absolute; top: 6.2%; left: 4.6%; font-size: clamp(.5rem, 1.2vw, .7rem); padding: .55em 1.8em .55em 1.5em; }
+.banner-btn { position: absolute; left: 3.4%; bottom: 6.5%; font-size: clamp(.55rem, 1.35vw, .84rem); }
+.banner .btn { filter: drop-shadow(0 0 9px color-mix(in srgb, var(--e1) 65%, transparent)); }
+.banner .btn:hover { filter: drop-shadow(0 0 17px var(--e1)); }
+.banner .btn .face { padding: clamp(9px, 1.9vw, 16px) clamp(18px, 3.8vw, 38px); background: linear-gradient(115deg, var(--e1) 0%, var(--e1) 48%, color-mix(in srgb, var(--e1) 55%, #000) 100%); color: #fff; }
 .banner-date {  /* tapa la caja "Fecha a confirmar" dibujada en la imagen y muestra la fecha real */
   position: absolute; top: 3.4%; right: 2%; width: 22.6%; min-height: 17%; padding: 4px 6px; display: grid; place-content: center; justify-items: center; text-align: center;
   background: rgb(8, 8, 16); border: 1px solid color-mix(in srgb, var(--e1) 75%, transparent); border-radius: 10px; box-shadow: 0 0 14px -4px var(--e1);
