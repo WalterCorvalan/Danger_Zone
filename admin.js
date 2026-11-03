@@ -5,10 +5,11 @@
   var VENTAS = ["PS5", "Xbox", "PC", "Realidad Virtual", "Simulador", "Comida", "Bebida", "Cumpleaños", "Jugadores casuales", "Eventos"];
   var GASTOS = ["Sueldos", "Alquiler", "Servicios", "Mercadería", "Mantenimiento", "Publicidad", "Otros"];
   var COLOR = { "PS5": "#00d9ff", "Xbox": "#39ff14", "PC": "#ff39c8", "Realidad Virtual": "#b86bff", "Simulador": "#ff9d00", "Comida": "#ffd84d", "Bebida": "#5ee7ff", "Cumpleaños": "#ff7ab8", "Jugadores casuales": "#9aa8ff", "Eventos": "#ff4d5e" };
-  var S = { more: 20, demo: false, url: "", clave: "", range: "mes", tab: "ingresos", data: { ingresos: [], egresos: [], reservas: [], pedidos: [] } };
+  var S = { more: 20, demo: false, url: "", clave: "", range: "mes", tab: "ingresos", btab: "agenda", bq: "", bst: "todas", data: { ingresos: [], egresos: [], reservas: [], pedidos: [] } };
   var $m = function (n) { return "$\u00a0" + Math.round(+n || 0).toLocaleString("es-AR"); };
   var today = function () { var d = new Date(); return d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2); };
   var esc = function (s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
+  function addDays(n) { var d = new Date(Date.now() + n * 864e5); return d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2); }
   function toast(t) { var e = $("toast"); e.textContent = t; e.hidden = false; setTimeout(function () { e.hidden = true; }, 2200); }
 
   /* ---------- conexión con la planilla ---------- */
@@ -51,7 +52,12 @@
       if (i % 3 === 0) d.egresos.push({ id: "e" + i, fecha: ds, categoria: GASTOS[Math.floor(r() * 7)], concepto: "Ejemplo", monto: 5000 + Math.floor(r() * 30000) });
     }
     d.reservas = [{ id: "r1", creada: "", fecha: today(), hora: "18:00 hs", tipo: "cumple", zona: "", nombre: "Ejemplo Cumpleaños", personas: "12", contacto: "5491100000000", estado: "pendiente", nota: "" },
-      { id: "r2", creada: "", fecha: today(), hora: "20:00 hs", tipo: "turno", zona: "PS5", nombre: "Ejemplo Turno", personas: "3", contacto: "", estado: "pendiente", nota: "" }];
+      { id: "r2", creada: "", fecha: today(), hora: "20:00 hs", tipo: "turno", zona: "PS5", nombre: "Ejemplo Turno", personas: "3", contacto: "", estado: "pendiente", nota: "" },
+      { id: "r3", creada: "", fecha: addDays(2), hora: "19:00 hs", tipo: "turno", zona: "Xbox", nombre: "Lucas (confirmado)", personas: "4", contacto: "", estado: "confirmada", nota: "" },
+      { id: "r4", creada: "", fecha: addDays(5), hora: "16:00 hs", tipo: "cumple", zona: "", nombre: "Cumple de Mía", personas: "10", contacto: "", estado: "confirmada", nota: "" },
+      { id: "r5", creada: "", fecha: addDays(-3), hora: "21:00 hs", tipo: "turno", zona: "PC Gamer", nombre: "Tomás", personas: "2", contacto: "", estado: "confirmada", nota: "" },
+      { id: "r6", creada: "", fecha: addDays(-9), hora: "17:00 hs", tipo: "cumple", zona: "", nombre: "Cumple de Joaquín", personas: "14", contacto: "", estado: "confirmada", nota: "" },
+      { id: "r7", creada: "", fecha: addDays(-6), hora: "20:00 hs", tipo: "turno", zona: "PS5", nombre: "Agus", personas: "3", contacto: "", estado: "cancelada", nota: "" }];
     d.pedidos = [{ id: "p1", creada: "", juego: "Tekken 8", plataforma: "PS5", nombre: "Ejemplo" }];
     return d;
   }
@@ -77,6 +83,7 @@
       ["Clientes", sum(ing, "clientes"), "personas atendidas", "#b86bff"],
       ["Reservas por responder", pend.length, "pendientes", "#ff9d00"], ["Pedidos de cumpleaños", cumples.length, "sin responder", "#ff7ab8"]
     ].map(function (k) { return '<div class="kpi" style="--c:' + k[3] + '"><small>' + k[0] + "</small><b>" + k[1] + "</b><i>" + k[2] + "</i></div>"; }).join("");
+    fitKpis();
 
     $("todo").innerHTML = "<h2>Para responder</h2>" + (pend.length ? pend.map(function (r) {
       var tel = String(r.contacto || "").replace(/\D/g, "");
@@ -114,13 +121,53 @@
       fl += '<rect x="' + x + '" y="' + (120 - a) + '" width="17" height="' + a + '" rx="3" fill="#39ff14"/><rect x="' + (x + 19) + '" y="' + (120 - b) + '" width="17" height="' + b + '" rx="3" fill="#ff39c8"/><text x="' + (x + 18) + '" y="136" text-anchor="middle">' + d.slice(8) + "</text>";
     });
     $("chFlow").innerHTML = '<svg viewBox="0 0 690 142" width="100%">' + fl + '</svg><p class="hint"><b style="color:#39ff14">■</b> entró &nbsp; <b style="color:#ff39c8">■</b> salió (últimos 14 días)</p>';
+    renderBookings();
     renderList();
+  }
+
+  /* achica el número si no entra en la tarjeta */
+  function fitKpis() {
+    qsa(".kpi b").forEach(function (b) {
+      b.style.fontSize = ""; var s = parseFloat(getComputedStyle(b).fontSize);
+      while (b.scrollWidth > b.clientWidth && s > 11) { s -= 1; b.style.fontSize = s + "px"; }
+    });
+  }
+  window.addEventListener("resize", fitKpis);
+
+  /* ---------- reservas: agenda + historial ---------- */
+  var EST = { pendiente: ["Pendiente", "#ff9d00"], confirmada: ["Confirmada", "#39ff14"], cancelada: ["Cancelada", "#ff4d5e"] };
+  function rkey(r) { return String(r.fecha) + " " + String(r.hora); }
+  function nice(f) { try { return new Date(f + "T12:00:00").toLocaleDateString("es-AR", { weekday: "long", day: "numeric", month: "long" }); } catch (e) { return f; } }
+  function rtitle(r) { return (r.tipo === "cumple" ? "🎂 Cumpleaños" : "🎮 Turno " + esc(r.zona)) + " · " + esc(r.nombre); }
+  function waBtn(r) { var tel = String(r.contacto || "").replace(/\D/g, ""); return tel ? '<a class="mini wa" target="_blank" rel="noopener" href="https://wa.me/' + tel + '">Escribirle</a>' : ""; }
+  function renderBookings() {
+    var all = S.data.reservas, t = today(), html = "";
+    if (S.btab === "agenda") {
+      var up = all.filter(function (r) { return r.estado === "confirmada" && r.fecha >= t; }).sort(function (a, b) { return rkey(a) < rkey(b) ? -1 : 1; });
+      if (!up.length) html = '<p class="empty">No hay turnos confirmados por delante. Cuando confirmes uno en "Para responder", aparece acá. ✅</p>';
+      else { var last = ""; up.forEach(function (r) {
+        if (r.fecha !== last) { last = r.fecha; html += '<h3 class="day">' + (r.fecha === t ? "Hoy" : nice(r.fecha)) + "</h3>"; }
+        html += '<div class="item"><div class="t"><b>' + esc(r.hora) + " · " + rtitle(r) + "</b><small>" + esc(r.personas) + " personas</small></div>" + waBtn(r) +
+          '<button class="mini no" data-est="cancelada" data-id="' + esc(r.id) + '">Cancelar</button></div>'; }); }
+      html += '<p class="hint">Los turnos ya pasados no se pierden: quedan guardados en el Historial.</p>';
+    } else {
+      var rows = all.filter(function (r) { return (S.bst === "todas" || r.estado === S.bst) && (!S.bq || (r.nombre + " " + r.zona).toLowerCase().indexOf(S.bq.toLowerCase()) >= 0); })
+        .sort(function (a, b) { return rkey(a) < rkey(b) ? 1 : -1; });
+      html = '<div class="bfilter"><input id="bq" type="search" placeholder="Buscar por nombre…" value="' + esc(S.bq) + '"><div class="period">' +
+        [["todas", "Todas"], ["confirmada", "Confirmadas"], ["pendiente", "Pendientes"], ["cancelada", "Canceladas"]].map(function (x) { return '<button data-bs="' + x[0] + '"' + (S.bst === x[0] ? ' class="on"' : "") + ">" + x[1] + "</button>"; }).join("") + "</div></div>";
+      html += rows.length ? '<div class="scroll"><table><thead><tr><th>Día</th><th>Hora</th><th>Qué</th><th>Nombre</th><th>Personas</th><th>Estado</th><th></th></tr></thead><tbody>' +
+        rows.slice(0, S.bmore || 20).map(function (r) { var e = EST[r.estado] || [r.estado, "#b2a6cc"];
+          return "<tr><td>" + esc(r.fecha) + "</td><td>" + esc(r.hora) + "</td><td>" + (r.tipo === "cumple" ? "🎂 Cumpleaños" : "🎮 " + esc(r.zona)) + "</td><td>" + esc(r.nombre) + "</td><td>" + esc(r.personas) + '</td><td><span class="st" style="--c:' + e[1] + '">' + e[0] + '</span></td><td><button class="x" title="Borrar" data-delr="' + esc(r.id) + '">🗑</button></td></tr>'; }).join("") + "</tbody></table></div>" +
+        (rows.length > (S.bmore || 20) ? '<p style="text-align:center;margin-top:12px"><button class="mini" data-bmore="1">Ver más (' + (rows.length - (S.bmore || 20)) + " restantes)</button></p>" : "") +
+        '<p class="hint">' + all.length + " reservas guardadas en total.</p>" : '<p class="empty">No hay reservas con ese filtro.</p>';
+    }
+    $("bbody").innerHTML = html;
+    var q = $("bq"); if (q) q.oninput = function () { S.bq = q.value; var p = q.selectionStart; renderBookings(); var n = $("bq"); n.focus(); n.setSelectionRange(p, p); };
   }
 
   var COLS = {
     ingresos: [["fecha", "Día"], ["hora", "Hora"], ["categoria", "Qué"], ["monto", "Monto"], ["clientes", "Personas"], ["nota", "Nota"]],
     egresos: [["fecha", "Día"], ["categoria", "Tipo"], ["concepto", "Detalle"], ["monto", "Monto"]],
-    reservas: [["fecha", "Día"], ["hora", "Hora"], ["tipo", "Tipo"], ["zona", "Zona"], ["nombre", "Nombre"], ["personas", "Personas"], ["estado", "Estado"]],
     pedidos: [["juego", "Juego"], ["plataforma", "Plataforma"], ["nombre", "Quién"]]
   };
   function renderList() {
@@ -158,7 +205,11 @@
     else if (b.dataset.more) { S.more += 20; renderList(); }
     else if (b.dataset.r) { S.range = b.dataset.r; qsa("#period button").forEach(function (x) { x.classList.toggle("on", x === b); }); render(); }
     else if (b.dataset.t) { S.tab = b.dataset.t; S.more = 20; qsa("#tabs button").forEach(function (x) { x.classList.toggle("on", x === b); }); renderList(); }
-    else if (b.dataset.est) change("reservas", b.dataset.id, { estado: b.dataset.est }).then(function () { toast("Listo ✔"); });
+    else if (b.dataset.b) { S.btab = b.dataset.b; qsa("#btabs button").forEach(function (x) { x.classList.toggle("on", x === b); }); renderBookings(); }
+    else if (b.dataset.bs) { S.bst = b.dataset.bs; S.bmore = 20; renderBookings(); }
+    else if (b.dataset.bmore) { S.bmore = (S.bmore || 20) + 20; renderBookings(); }
+    else if (b.dataset.delr) { if (confirm("¿Borrar esta reserva del historial?")) remove("reservas", b.dataset.delr).then(function () { toast("Borrada"); }); }
+    else if (b.dataset.est) change("reservas", b.dataset.id, { estado: b.dataset.est }).then(function () { toast(b.dataset.est === "confirmada" ? "Confirmada ✔ Mirala en Agenda" : "Cancelada. Queda en el Historial"); });
     else if (b.dataset.del) { if (confirm("¿Borrar este renglón?")) remove(S.tab, b.dataset.del).then(function () { toast("Borrado"); }); }
   });
   $("refresh").onclick = function () { load().then(function () { toast("Actualizado ✔"); }); };

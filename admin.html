@@ -47,6 +47,14 @@
 
   <section class="todo card" id="todo"></section>
 
+  <section class="card bookings" id="bookings">
+    <h2>Reservas</h2>
+    <div class="tabs" id="btabs" role="tablist">
+      <button data-b="agenda" class="on">📅 Agenda · próximos turnos</button><button data-b="historial">🗂 Historial · todas las reservas</button>
+    </div>
+    <div id="bbody"></div>
+  </section>
+
   <section class="charts">
     <article class="card"><h2>¿A qué hora viene más gente?</h2><div id="chHours"></div></article>
     <article class="card"><h2>¿Cuánto entra por cada cosa?</h2><div id="chCats"></div></article>
@@ -55,7 +63,7 @@
 
   <section class="lists">
     <div class="tabs" id="tabs" role="tablist">
-      <button data-t="ingresos" class="on">Ventas</button><button data-t="egresos">Gastos</button><button data-t="reservas">Reservas</button><button data-t="pedidos">Juegos pedidos</button>
+      <button data-t="ingresos" class="on">Ventas</button><button data-t="egresos">Gastos</button><button data-t="pedidos">Juegos pedidos</button>
     </div>
     <div class="card" id="list"></div>
   </section>
