@@ -66,7 +66,7 @@
         '<rect x="96" y="129" width="208" height="22" fill="url(#g' + id + ')"/>' +
         '<rect x="187" y="140" width="26" height="108" fill="url(#g' + id + ')"/>' +
         '<circle cx="200" cy="140" r="34" fill="#0b0814" stroke="' + c1 + '" stroke-width="4"/>' +
-        '<text x="200" y="146" text-anchor="middle" font-family="Anton,Impact,sans-serif" font-size="20" fill="' + c1 + '">F1</text>' +
+        '<text x="200" y="146" text-anchor="middle" font-family="Tomorrow,Impact,sans-serif" font-style="italic" font-weight="800" font-size="18" fill="' + c1 + '">F1</text>' +
         '<rect x="193" y="30" width="14" height="22" rx="3" fill="#fff"/>');
     }
   };

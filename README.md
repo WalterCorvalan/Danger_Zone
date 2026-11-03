@@ -18,6 +18,7 @@ Abrir `index.html` en el navegador, o servirla con `python3 -m http.server`.
 | Horarios y dirección | sección `#visitanos` en `index.html` |
 | Horarios disponibles del formulario de turnos | función `slots()` en `script.js` |
 | Colores generales | variables `:root` en `styles.css` |
+| Tipografía de títulos | `--display` en `styles.css` (Tomorrow itálica, la más parecida a la del logo) y el `<link>` de Google Fonts en `index.html` |
 
 ## Imágenes reales (opcional)
 
